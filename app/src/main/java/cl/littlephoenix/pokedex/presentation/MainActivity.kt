@@ -1,7 +1,8 @@
-package cl.littlephoenix.pokedex
+package cl.littlephoenix.pokedex.presentation
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import cl.littlephoenix.pokedex.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
