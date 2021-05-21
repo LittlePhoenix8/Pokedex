@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Pokedex</string>
+    <string name="hint_search">Buscar Pokemon</string>
+    <string name="search">Buscar</string>
 </resources>
