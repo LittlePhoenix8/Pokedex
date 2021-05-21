@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import cl.littlephoenix.pokedex.data.model.PokemonName
 import cl.littlephoenix.pokedex.databinding.PokemonListFragmentBinding
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
@@ -16,6 +18,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class PokemonListFragment : Fragment() {
     private lateinit var binding: PokemonListFragmentBinding
     private val viewModel: PokemonListViewModel by activityViewModels()
+    private val pokemonList = ArrayList<PokemonName>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,14 +30,33 @@ class PokemonListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        showProgress()
+        val adapter = PokemonListAdapter(pokemonList)
+        binding.rvPokemon.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvPokemon.adapter = adapter
+        adapter.onItemClicked = { pokemon ->
+            Log.d("Pokemon", Gson().toJson(pokemon))
+            //TODO: go to pokemon details
+        }
         lifecycleScope.launchWhenResumed {
             viewModel.getFirstGenPokemon()
         }
         viewModel.pokemonList.observe(viewLifecycleOwner, {
-            Log.d("PokemonList", Gson().toJson(it.results))
+            pokemonList.addAll(it.results)
+            (binding.rvPokemon.adapter as PokemonListAdapter).notifyDataSetChanged()
+            hideProgress()
         })
         viewModel.errorMessage.observe(viewLifecycleOwner, {
+            hideProgress()
             Log.e("Error", it)
         })
+    }
+
+    private fun showProgress() {
+        binding.progressBar.visibility = View.VISIBLE
+    }
+
+    private fun hideProgress() {
+        binding.progressBar.visibility = View.GONE
     }
 }
