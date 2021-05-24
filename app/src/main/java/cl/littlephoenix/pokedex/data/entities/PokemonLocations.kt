@@ -1,4 +1,4 @@
-package cl.littlephoenix.pokedex.data.model
+package cl.littlephoenix.pokedex.data.entities
 
 data class PokemonLocations(var location_area: LocationArea)
 

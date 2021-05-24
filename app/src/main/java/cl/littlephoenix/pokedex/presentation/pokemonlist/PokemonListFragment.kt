@@ -9,8 +9,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import cl.littlephoenix.pokedex.data.model.PokemonName
+import cl.littlephoenix.pokedex.data.entities.PokemonName
 import cl.littlephoenix.pokedex.databinding.PokemonListFragmentBinding
+import cl.littlephoenix.pokedex.helper.ResourceHelper
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -30,7 +31,6 @@ class PokemonListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        showProgress()
         val adapter = PokemonListAdapter(pokemonList)
         binding.rvPokemon.layoutManager = LinearLayoutManager(requireContext())
         binding.rvPokemon.adapter = adapter
@@ -38,10 +38,24 @@ class PokemonListFragment : Fragment() {
             Log.d("Pokemon", Gson().toJson(pokemon))
             //TODO: go to pokemon details
         }
-        lifecycleScope.launchWhenResumed {
+        /*lifecycleScope.launchWhenResumed {
             viewModel.getFirstGenPokemon()
-        }
+        }*/
         viewModel.pokemonList.observe(viewLifecycleOwner, {
+            when(it.status) {
+                ResourceHelper.Status.LOADING -> showProgress()
+                ResourceHelper.Status.ERROR -> {
+                    hideProgress()
+                    Log.e("Error", it.message!!)
+                }
+                ResourceHelper.Status.SUCCESS -> {
+                    //pokemonList.addAll(it.data)
+                    (binding.rvPokemon.adapter as PokemonListAdapter).notifyDataSetChanged()
+                    hideProgress()
+                }
+            }
+        })
+        /*viewModel.pokemonList.observe(viewLifecycleOwner, {
             pokemonList.addAll(it.results)
             (binding.rvPokemon.adapter as PokemonListAdapter).notifyDataSetChanged()
             hideProgress()
@@ -49,7 +63,7 @@ class PokemonListFragment : Fragment() {
         viewModel.errorMessage.observe(viewLifecycleOwner, {
             hideProgress()
             Log.e("Error", it)
-        })
+        })*/
     }
 
     private fun showProgress() {

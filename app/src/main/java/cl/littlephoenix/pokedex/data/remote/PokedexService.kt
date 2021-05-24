@@ -1,9 +1,9 @@
 package cl.littlephoenix.pokedex.data.remote
 
-import cl.littlephoenix.pokedex.data.model.PokemonEvolution
-import cl.littlephoenix.pokedex.data.model.PokemonInfo
-import cl.littlephoenix.pokedex.data.model.PokemonLocations
-import cl.littlephoenix.pokedex.data.model.PokemonResponse
+import cl.littlephoenix.pokedex.data.entities.PokemonEvolution
+import cl.littlephoenix.pokedex.data.entities.PokemonInfo
+import cl.littlephoenix.pokedex.data.entities.PokemonLocations
+import cl.littlephoenix.pokedex.data.entities.PokemonResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -16,7 +16,7 @@ interface PokedexService {
     }
 
     @GET("pokemon?limit=151")
-    suspend fun getFirstGenPokemon(): Response<PokemonResponse>?
+    suspend fun getFirstGenPokemon(): Response<PokemonResponse>
 
     @GET("pokemon/{pokemonName}")
     suspend fun getPokemonDetail(@Path("pokemonName") pokemonName: String): Response<PokemonInfo>
