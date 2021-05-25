@@ -24,13 +24,4 @@ object NetworkModule {
             .build()
         return retrofit.create(PokedexApiService::class.java)
     }
-
-    /*@Singleton
-    @Provides
-    fun getDatabase(@ApplicationContext appContext: Context) =
-        PokemonDatabase.getDatabase(appContext)
-
-    @Singleton
-    @Provides
-    fun getPokemonDao(database: PokemonDatabase) = database.getPokemonDao()*/
 }

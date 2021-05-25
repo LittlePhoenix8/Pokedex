@@ -10,7 +10,7 @@ interface PokedexApiService {
     }
 
     @GET("pokemon?limit=151")
-    suspend fun getFirstGenPokemon(): PokemonResponse
+    suspend fun getFirstGenPokemon(): PokemonResponse?
 
     /*@GET("pokemon/{pokemonName}")
     suspend fun getPokemonDetail(@Path("pokemonName") pokemonName: String): Response<PokemonInfo>
