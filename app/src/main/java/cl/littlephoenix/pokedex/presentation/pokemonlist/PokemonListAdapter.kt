@@ -4,8 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import cl.littlephoenix.pokedex.R
-import cl.littlephoenix.pokedex.data.entities.PokemonName
-import cl.littlephoenix.pokedex.data.remote.PokedexService.Companion.BASE_IMG_URL
+import cl.littlephoenix.pokedex.data.api.PokedexApiService.Companion.BASE_IMG_URL
+import cl.littlephoenix.pokedex.data.model.PokemonName
 import cl.littlephoenix.pokedex.databinding.PokemonListItemBinding
 import coil.load
 import java.util.*

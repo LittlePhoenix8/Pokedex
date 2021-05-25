@@ -1,16 +1,16 @@
-package cl.littlephoenix.pokedex.data.remote
+package cl.littlephoenix.pokedex.data.model
 
 import android.util.Log
-import cl.littlephoenix.pokedex.helper.ResourceHelper
+import cl.littlephoenix.pokedex.utils.Resource
 import retrofit2.Response
 
 abstract class BaseDataSource {
-    protected suspend fun <T> getResult(call: suspend () -> Response<T>): ResourceHelper<T> {
+    protected suspend fun <T> getResult(call: suspend () -> Response<T>): Resource<T> {
         try {
             val response = call()
             if (response.isSuccessful) {
                 val body = response.body()
-                if (body != null) return ResourceHelper.success(body)
+                if (body != null) return Resource.success(body)
             }
             return error(" ${response.code()} ${response.message()}")
         } catch (e: Exception) {
@@ -18,8 +18,8 @@ abstract class BaseDataSource {
         }
     }
 
-    private fun <T> error(message: String): ResourceHelper<T> {
+    private fun <T> error(message: String): Resource<T> {
         Log.e("ResponseError", message)
-        return ResourceHelper.error("Network call has failed for a following reason: $message")
+        return Resource.error("Network call has failed for a following reason: $message")
     }
 }

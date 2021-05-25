@@ -1,6 +1,5 @@
 package cl.littlephoenix.pokedex.data.local
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import cl.littlephoenix.pokedex.data.entities.PokemonEntity
 
@@ -13,8 +12,8 @@ interface PokemonDao {
     suspend fun update(pokemon: List<PokemonEntity>)
 
     @Query("SELECT * FROM pokemon ORDER BY id_pokemon ASC")
-    fun getAllPokemon(): LiveData<List<PokemonEntity>>
+    fun getAllPokemon(): List<PokemonEntity>
 
     @Query("SELECT * FROM pokemon WHERE name_pokemon is (:name)")
-    fun getAllPokemonByName(name: String): LiveData<List<PokemonEntity>>
+    fun getAllPokemonByName(name: String): List<PokemonEntity>
 }

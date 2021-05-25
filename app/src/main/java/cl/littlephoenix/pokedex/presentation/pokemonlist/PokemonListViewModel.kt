@@ -2,8 +2,11 @@ package cl.littlephoenix.pokedex.presentation.pokemonlist
 
 import androidx.lifecycle.*
 import cl.littlephoenix.pokedex.data.repository.PokedexRepository
+import cl.littlephoenix.pokedex.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
@@ -15,7 +18,15 @@ class PokemonListViewModel @Inject constructor(
     val errorMessage : MutableLiveData<String> by lazy {
         MutableLiveData<String>()
     }*/
-    val pokemonList = pokedexRepository.getFirstGenPokemon()
+
+    fun getFirstGenPokemon() = liveData(Dispatchers.IO) {
+        emit(Resource.loading(null))
+        try {
+            emit(Resource.success(pokedexRepository.getFirstGenPokemon()))
+        } catch (e: Exception) {
+            emit(Resource.error(e.message ?: "Error!", null))
+        }
+    }
 
     /*fun getFirstGenPokemon() {
         viewModelScope.launch {

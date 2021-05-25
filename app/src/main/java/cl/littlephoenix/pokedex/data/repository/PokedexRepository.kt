@@ -1,19 +1,29 @@
 package cl.littlephoenix.pokedex.data.repository
 
-import cl.littlephoenix.pokedex.data.entities.toEntity
-import cl.littlephoenix.pokedex.data.local.PokemonDao
-import cl.littlephoenix.pokedex.data.remote.PokedexRemoteDataSource
-import cl.littlephoenix.pokedex.helper.performGetOperation
+import cl.littlephoenix.pokedex.data.api.PokedexApiService
+import cl.littlephoenix.pokedex.data.model.PokemonResponse
 import javax.inject.Inject
 
-class PokedexRepository @Inject constructor(
-    private val pokedexRemoteDataSource: PokedexRemoteDataSource,
-    private val pokemonDao: PokemonDao) {
-    fun getFirstGenPokemon() = performGetOperation(
-        databaseQuery = { pokemonDao.getAllPokemon() },
-        networkCall = { pokedexRemoteDataSource.getFirstGenPokemon() },
-        saveCallResult = { pokemonDao.insert(it.toEntity()) }
-    )
+class PokedexRepository @Inject constructor(private val pokedesApiService: PokedexApiService) {
+
+    suspend fun getFirstGenPokemon(): PokemonResponse = pokedesApiService.getFirstGenPokemon()
+
+    /*suspend fun fetchTrendingMovies(): Flow<Result<TrendingMovieResponse>?> {
+        return flow {
+            emit(fetchTrendingMoviesCached())
+            emit(Result.loading())
+            val result = movieRemoteDataSource.fetchTrendingMovies()
+
+            //Cache to database if response is successful
+            if (result.status == Result.Status.SUCCESS) {
+                result.data?.results?.let { it ->
+                    movieDao.deleteAll(it)
+                    movieDao.insertAll(it)
+                }
+            }
+            emit(result)
+        }.flowOn(Dispatchers.IO)
+    }*/
     //TODO fix next
     /*suspend fun getPokemonDetail(pokemonName: String) = pokedexHelper.getPokemonDetail(pokemonName)
     suspend fun getPokemonLocation(pokemonNumber: Int) = pokedexHelper.getPokemonLocation(pokemonNumber)
