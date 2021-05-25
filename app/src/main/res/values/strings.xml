@@ -3,4 +3,10 @@
     <string name="hint_search">Buscar Pokemon</string>
     <string name="search">Buscar</string>
     <string name="poke_number">No %s</string>
+    <string name="name">Name</string>
+    <string name="type">Type</string>
+    <string name="evolves_to">Evolves To</string>
+    <string name="attacks">Attacks</string>
+    <string name="skills">Skills</string>
+    <string name="number">Number</string>
 </resources>

@@ -1,6 +1,6 @@
-package cl.littlephoenix.pokedex.data.entities
+package cl.littlephoenix.pokedex.data.model
 
-data class PokemonInfo(var id: Int,
+data class PokemonInfoResponse(var id: Int,
                        var name: String,
                        var types: List<PokemonTypes>,
                        var species: Species,

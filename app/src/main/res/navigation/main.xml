@@ -9,6 +9,18 @@
         android:id="@+id/pokemonListFragment"
         android:name="cl.littlephoenix.pokedex.presentation.pokemonlist.PokemonListFragment"
         tools:layout="@layout/pokemon_list_fragment">
+        <action
+            android:id="@+id/goToPokemonDetails"
+            app:destination="@id/pokemonDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/pokemonDetailFragment"
+        android:name="cl.littlephoenix.pokedex.presentation.pokemondetail.PokemonDetailsFragment"
+        tools:layout="@layout/pokemon_details_fragment">
+        <argument
+            android:name="pokemon"
+            app:argType="cl.littlephoenix.pokedex.presentation.model.PokemonModel" />
     </fragment>
 
 </navigation>

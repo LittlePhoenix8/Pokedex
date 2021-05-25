@@ -13,5 +13,5 @@ fun PokemonName.toEntity(): PokemonEntity {
 }
 
 fun PokemonName.toModel(): PokemonModel {
-    return PokemonModel(url.getIdFromUrl(), name.getNameUppercase(), url.getPhotoUrl())
+    return PokemonModel(url.getIdFromUrl(), name.getNameUppercase(), url.getPhotoUrl(), listOf())
 }

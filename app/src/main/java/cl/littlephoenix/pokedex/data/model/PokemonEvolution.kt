@@ -1,5 +1,7 @@
 package cl.littlephoenix.pokedex.data.entities
 
+import cl.littlephoenix.pokedex.data.model.Species
+
 data class PokemonEvolution(var chain: ChainEvol)
 
 data class ChainEvol(var evolves_to: List<EvolutionInfo>)

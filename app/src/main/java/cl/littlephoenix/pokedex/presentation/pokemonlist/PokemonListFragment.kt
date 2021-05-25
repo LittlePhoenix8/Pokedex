@@ -1,15 +1,20 @@
 package cl.littlephoenix.pokedex.presentation.pokemonlist
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import cl.littlephoenix.pokedex.databinding.PokemonListFragmentBinding
 import cl.littlephoenix.pokedex.presentation.model.PokemonModel
+import cl.littlephoenix.pokedex.presentation.pokemondetail.PokemonDetailsFragment
 import cl.littlephoenix.pokedex.utils.Resource
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
@@ -31,11 +36,28 @@ class PokemonListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = PokemonListAdapter(pokemonList)
+        binding.bSearch.setOnClickListener {
+            val text = binding.etSearch.text.toString()
+            adapter.filter.filter(text)
+        }
+        binding.etSearch.addTextChangedListener(object: TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                Log.e("onTextChanged", s?.toString() ?: "")
+                adapter.filter.filter(s)
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+            }
+        })
         binding.rvPokemon.layoutManager = LinearLayoutManager(requireContext())
         binding.rvPokemon.adapter = adapter
         adapter.onItemClicked = { pokemon ->
             Log.d("Pokemon", Gson().toJson(pokemon))
-            //TODO: go to pokemon details
+            findNavController()
+                .navigate(PokemonListFragmentDirections.goToPokemonDetails(pokemon = pokemon))
         }
         viewModel.getFirstGenPokemon().observe(viewLifecycleOwner, {
             when(it.status) {
