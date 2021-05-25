@@ -7,10 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import cl.littlephoenix.pokedex.data.model.PokemonName
 import cl.littlephoenix.pokedex.databinding.PokemonListFragmentBinding
+import cl.littlephoenix.pokedex.presentation.model.PokemonModel
+import cl.littlephoenix.pokedex.utils.Resource
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -18,7 +18,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class PokemonListFragment : Fragment() {
     private lateinit var binding: PokemonListFragmentBinding
     private val viewModel: PokemonListViewModel by activityViewModels()
-    private val pokemonList = ArrayList<PokemonName>()
+    private val pokemonList = ArrayList<PokemonModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,7 +30,6 @@ class PokemonListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        showProgress()
         val adapter = PokemonListAdapter(pokemonList)
         binding.rvPokemon.layoutManager = LinearLayoutManager(requireContext())
         binding.rvPokemon.adapter = adapter
@@ -38,17 +37,19 @@ class PokemonListFragment : Fragment() {
             Log.d("Pokemon", Gson().toJson(pokemon))
             //TODO: go to pokemon details
         }
-        lifecycleScope.launchWhenResumed {
-            viewModel.getFirstGenPokemon()
-        }
-        viewModel.pokemonList.observe(viewLifecycleOwner, {
-            pokemonList.addAll(it.results)
-            (binding.rvPokemon.adapter as PokemonListAdapter).notifyDataSetChanged()
-            hideProgress()
-        })
-        viewModel.errorMessage.observe(viewLifecycleOwner, {
-            hideProgress()
-            Log.e("Error", it)
+        viewModel.getFirstGenPokemon().observe(viewLifecycleOwner, {
+            when(it.status) {
+                Resource.Status.LOADING -> showProgress()
+                Resource.Status.ERROR -> {
+                    hideProgress()
+                    Log.e("Error", it.message ?: "error")
+                }
+                Resource.Status.SUCCESS -> {
+                    pokemonList.addAll(it.data?: ArrayList())
+                    (binding.rvPokemon.adapter as PokemonListAdapter).notifyDataSetChanged()
+                    hideProgress()
+                }
+            }
         })
     }
 
