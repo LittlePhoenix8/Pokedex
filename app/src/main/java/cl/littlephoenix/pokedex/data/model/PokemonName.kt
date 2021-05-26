@@ -13,5 +13,12 @@ fun PokemonName.toEntity(): PokemonEntity {
 }
 
 fun PokemonName.toModel(): PokemonModel {
-    return PokemonModel(url.getIdFromUrl(), name.getNameUppercase(), url.getPhotoUrl(), listOf(), listOf(), listOf())
+    return PokemonModel(id = url.getIdFromUrl(),
+        name = name.getNameUppercase(),
+        urlPhoto = url.getPhotoUrl(),
+        type = listOf(),
+        attacks = listOf(),
+        skills = listOf(),
+        chainId = -1,
+        evolutions = listOf())
 }

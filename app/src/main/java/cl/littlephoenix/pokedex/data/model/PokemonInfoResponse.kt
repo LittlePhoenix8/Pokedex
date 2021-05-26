@@ -1,6 +1,7 @@
 package cl.littlephoenix.pokedex.data.model
 
 import cl.littlephoenix.pokedex.presentation.model.PokemonModel
+import cl.littlephoenix.pokedex.utils.getIdFromUrl
 import cl.littlephoenix.pokedex.utils.getNameUppercase
 import cl.littlephoenix.pokedex.utils.getPhotoUrl
 
@@ -32,5 +33,18 @@ fun PokemonInfoResponse.toModel(): PokemonModel {
         urlPhoto = id.getPhotoUrl(),
         type = types.map { it.type.name.getNameUppercase() },
         attacks = moves.map { it.move.name.getNameUppercase().replace("-", " ") },
-        skills = abilities.map { it.ability.name.getNameUppercase().replace("-", " ") })
+        skills = abilities.map { it.ability.name.getNameUppercase().replace("-", " ") },
+        chainId = -1,
+        evolutions = listOf())
+}
+
+fun Species.toModel(chainId: Int): PokemonModel {
+    return PokemonModel(id = url.getIdFromUrl(),
+        name = name.getNameUppercase(),
+        url.getPhotoUrl(),
+        type = listOf(),
+        attacks = listOf(),
+        skills = listOf(),
+        chainId = chainId,
+        evolutions = listOf())
 }

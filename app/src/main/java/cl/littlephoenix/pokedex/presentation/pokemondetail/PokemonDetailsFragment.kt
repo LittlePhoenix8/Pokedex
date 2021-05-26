@@ -55,6 +55,22 @@ class PokemonDetailsFragment : Fragment() {
                 }
             }
         })
+        viewModel.getPokemonSpecies(pokemon.id).observe(viewLifecycleOwner, {
+            when(it.status) {
+                Resource.Status.LOADING -> showProgress()
+                Resource.Status.ERROR -> {
+                    hideProgress()
+                    Log.e("Error", it.message ?: "error")
+                }
+                Resource.Status.SUCCESS -> {
+                    pokemon.evolutions = ArrayList(it.data)
+                    pokemon.evolutions.firstOrNull()?.let { firstPoke ->
+                        pokemon.chainId = firstPoke.chainId
+                    }
+                    setEvolutions()
+                }
+            }
+        })
     }
 
     private fun showProgress() {
@@ -76,6 +92,11 @@ class PokemonDetailsFragment : Fragment() {
         binding.rvPokeAttacks.adapter = PokemonAttacksAdapter(ArrayList(pokemon.attacks))
         binding.rvPokeSkills.layoutManager = LinearLayoutManager(requireContext())
         binding.rvPokeSkills.adapter = PokemonAttacksAdapter(ArrayList(pokemon.skills))
-        Log.d("Skills", Gson().toJson(pokemon.skills))
+        Log.d("Skills", Gson().toJson(pokemon.chainId))
+    }
+
+    private fun setEvolutions() {
+        Log.e("Evolves", Gson().toJson(pokemon.evolutions))
+        //TODO evolutions adapter
     }
 }
