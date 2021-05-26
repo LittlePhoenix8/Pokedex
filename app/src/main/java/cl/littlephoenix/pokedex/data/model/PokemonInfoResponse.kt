@@ -31,5 +31,6 @@ fun PokemonInfoResponse.toModel(): PokemonModel {
         name = name.getNameUppercase(),
         urlPhoto = id.getPhotoUrl(),
         type = types.map { it.type.name.getNameUppercase() },
-        attacks = moves.map { it.move.name.getNameUppercase().replace("-", " ") })
+        attacks = moves.map { it.move.name.getNameUppercase().replace("-", " ") },
+        skills = abilities.map { it.ability.name.getNameUppercase().replace("-", " ") })
 }

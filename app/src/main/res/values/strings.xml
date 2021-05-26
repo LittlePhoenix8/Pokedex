@@ -9,4 +9,5 @@
     <string name="attacks">Attacks</string>
     <string name="skills">Skills</string>
     <string name="number">Number</string>
+    <string name="attack">• %s</string>
 </resources>

@@ -8,11 +8,13 @@ data class PokemonModel (var id: Int,
                          var name: String,
                          var urlPhoto: String,
                          var type: List<String>,
-                         var attacks: List<String>): Parcelable {
+                         var attacks: List<String>,
+                         var skills: List<String>): Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
         parcel.readString()!!,
         parcel.readString()!!,
+        parcel.createStringArrayList()!!,
         parcel.createStringArrayList()!!,
         parcel.createStringArrayList()!!
     )
@@ -23,6 +25,7 @@ data class PokemonModel (var id: Int,
         parcel.writeString(urlPhoto)
         parcel.writeStringList(type)
         parcel.writeStringList(attacks)
+        parcel.writeStringList(skills)
     }
 
     override fun describeContents(): Int {
@@ -42,5 +45,5 @@ data class PokemonModel (var id: Int,
 
 //TODO update
 fun PokemonEntity.toModel(): PokemonModel {
-    return PokemonModel(id, name, photoUrl, listOf(), listOf())
+    return PokemonModel(id, name, photoUrl, listOf(), listOf(), listOf())
 }

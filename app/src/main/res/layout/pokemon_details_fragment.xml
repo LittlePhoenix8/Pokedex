@@ -115,19 +115,6 @@
             <!-- Evolutions -->
 
             <TextView
-                android:id="@+id/tvPokeAttacksLabel"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/attacks"
-                android:textStyle="bold"
-                android:textSize="13sp"
-                app:layout_constraintTop_toBottomOf="@+id/tvPokeEvolutionsLabel"
-                app:layout_constraintStart_toStartOf="@+id/tvPokeEvolutionsLabel"
-                app:layout_constraintEnd_toEndOf="@+id/tvPokeEvolutionsLabel" />
-            <!-- Attacks -->
-
-            <TextView
                 android:id="@+id/tvPokeSkillsLabel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -135,10 +122,42 @@
                 android:text="@string/skills"
                 android:textStyle="bold"
                 android:textSize="13sp"
+                app:layout_constraintTop_toBottomOf="@+id/tvPokeEvolutionsLabel"
+                app:layout_constraintStart_toStartOf="@+id/tvPokeEvolutionsLabel"
+                app:layout_constraintEnd_toEndOf="@+id/tvPokeEvolutionsLabel" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvPokeSkills"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/tvPokeSkillsLabel"
+                app:layout_constraintStart_toStartOf="@+id/tvPokeSkillsLabel"
+                app:layout_constraintEnd_toEndOf="@+id/tvPokeSkillsLabel"
+                tools:listitem="@layout/pokemon_attacks_item"
+                tools:itemCount="2" />
+
+            <TextView
+                android:id="@+id/tvPokeAttacksLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/attacks"
+                android:textStyle="bold"
+                android:textSize="13sp"
+                app:layout_constraintTop_toBottomOf="@+id/rvPokeSkills"
+                app:layout_constraintStart_toStartOf="@+id/rvPokeSkills"
+                app:layout_constraintEnd_toEndOf="@+id/rvPokeSkills" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvPokeAttacks"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@+id/tvPokeAttacksLabel"
                 app:layout_constraintStart_toStartOf="@+id/tvPokeAttacksLabel"
-                app:layout_constraintEnd_toEndOf="@+id/tvPokeAttacksLabel" />
-            <!-- Skills -->
+                app:layout_constraintEnd_toEndOf="@+id/tvPokeAttacksLabel"
+                tools:listitem="@layout/pokemon_attacks_item"
+                tools:itemCount="3"
+                />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

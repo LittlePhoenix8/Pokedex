@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import cl.littlephoenix.pokedex.databinding.PokemonDetailsFragmentBinding
 import cl.littlephoenix.pokedex.presentation.model.PokemonModel
 import cl.littlephoenix.pokedex.presentation.pokemonlist.PokemonListAdapter
@@ -71,6 +72,10 @@ class PokemonDetailsFragment : Fragment() {
         binding.tvPokeName.text = pokemon.name
         binding.tvPokeNumber.text = pokemon.id.toString()
         binding.tvPokeType.text = pokemon.type.joinToString("/")
-        Log.d("Attacks", Gson().toJson(pokemon.attacks))
+        binding.rvPokeAttacks.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvPokeAttacks.adapter = PokemonAttacksAdapter(ArrayList(pokemon.attacks))
+        binding.rvPokeSkills.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvPokeSkills.adapter = PokemonAttacksAdapter(ArrayList(pokemon.skills))
+        Log.d("Skills", Gson().toJson(pokemon.skills))
     }
 }
