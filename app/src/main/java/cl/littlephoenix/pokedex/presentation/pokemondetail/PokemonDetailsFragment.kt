@@ -10,6 +10,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
 import cl.littlephoenix.pokedex.databinding.PokemonDetailsFragmentBinding
 import cl.littlephoenix.pokedex.presentation.model.PokemonModel
+import cl.littlephoenix.pokedex.presentation.pokemonlist.PokemonListAdapter
+import cl.littlephoenix.pokedex.utils.Resource
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -38,6 +40,19 @@ class PokemonDetailsFragment : Fragment() {
         binding.tvPokeNumber.text = pokemon.id.toString()
         binding.tvPokeType.text = pokemon.type.joinToString("/")
 
+        viewModel.getPokemonDetails(pokemon.id).observe(viewLifecycleOwner, {
+            when(it.status) {
+                Resource.Status.LOADING -> showProgress()
+                Resource.Status.ERROR -> {
+                    hideProgress()
+                    Log.e("Error", it.message ?: "error")
+                }
+                Resource.Status.SUCCESS -> {
+                    Log.e("PokeD", Gson().toJson(it))
+                    hideProgress()
+                }
+            }
+        })
     }
 
     private fun showProgress() {

@@ -15,7 +15,7 @@ interface PokedexApiService {
     suspend fun getFirstGenPokemon(): PokemonResponse?
 
     @GET("pokemon/{pokemonId}")
-    suspend fun getPokemonDetail(@Path("pokemonId") pokemonId: Int): PokemonInfoResponse
+    suspend fun getPokemonDetail(@Path("pokemonId") pokemonId: Int): PokemonInfoResponse?
 
     /*@GET("pokemon/{pokemonNumber}/encounters")
     suspend fun getPokemonLocation(@Path("pokemonNumber") pokemonNumber: Int): Response<Array<PokemonLocations>>
