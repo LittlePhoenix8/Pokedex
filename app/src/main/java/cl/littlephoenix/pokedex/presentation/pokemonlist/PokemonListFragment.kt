@@ -8,13 +8,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import cl.littlephoenix.pokedex.databinding.PokemonListFragmentBinding
 import cl.littlephoenix.pokedex.presentation.model.PokemonModel
-import cl.littlephoenix.pokedex.presentation.pokemondetail.PokemonDetailsFragment
 import cl.littlephoenix.pokedex.utils.Resource
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
@@ -45,7 +43,6 @@ class PokemonListFragment : Fragment() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                Log.e("onTextChanged", s?.toString() ?: "")
                 adapter.filter.filter(s)
             }
 

@@ -3,6 +3,7 @@ package cl.littlephoenix.pokedex.presentation.pokemondetail
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
+import cl.littlephoenix.pokedex.data.model.toModel
 import cl.littlephoenix.pokedex.data.repository.PokedexLocalRepository
 import cl.littlephoenix.pokedex.data.repository.PokedexRepository
 import cl.littlephoenix.pokedex.utils.Resource
@@ -26,8 +27,7 @@ class PokemonDetailsViewModel @Inject constructor(
                 } else {
                     Log.d("Remote", Gson().toJson(remote))
                     //TODO update database
-                    //TODO parse to model
-                    val pokemonModel = remote
+                    val pokemonModel = remote.toModel()
                     Log.d("ToModel", Gson().toJson(pokemonModel))
                     emit(Resource.success(pokemonModel))
                 }

@@ -12,6 +12,7 @@ import cl.littlephoenix.pokedex.databinding.PokemonDetailsFragmentBinding
 import cl.littlephoenix.pokedex.presentation.model.PokemonModel
 import cl.littlephoenix.pokedex.presentation.pokemonlist.PokemonListAdapter
 import cl.littlephoenix.pokedex.utils.Resource
+import coil.load
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -35,11 +36,7 @@ class PokemonDetailsFragment : Fragment() {
         showProgress()
         pokemon = args.pokemon
         Log.d("PokeDetails", Gson().toJson(pokemon))
-
-        binding.tvPokeName.text = pokemon.name
-        binding.tvPokeNumber.text = pokemon.id.toString()
-        binding.tvPokeType.text = pokemon.type.joinToString("/")
-
+        setInfo()
         viewModel.getPokemonDetails(pokemon.id).observe(viewLifecycleOwner, {
             when(it.status) {
                 Resource.Status.LOADING -> showProgress()
@@ -48,7 +45,11 @@ class PokemonDetailsFragment : Fragment() {
                     Log.e("Error", it.message ?: "error")
                 }
                 Resource.Status.SUCCESS -> {
-                    Log.e("PokeD", Gson().toJson(it))
+                    Log.d("PokeD", Gson().toJson(it.data))
+                    if (it.data != null) {
+                        pokemon = it.data
+                        setInfo()
+                    }
                     hideProgress()
                 }
             }
@@ -63,5 +64,13 @@ class PokemonDetailsFragment : Fragment() {
     private fun hideProgress() {
         binding.progressBar.visibility = View.GONE
         binding.clPokemonDetail.visibility = View.VISIBLE
+    }
+
+    private fun setInfo() {
+        binding.ivPokemon.load(pokemon.urlPhoto)
+        binding.tvPokeName.text = pokemon.name
+        binding.tvPokeNumber.text = pokemon.id.toString()
+        binding.tvPokeType.text = pokemon.type.joinToString("/")
+        Log.d("Attacks", Gson().toJson(pokemon.attacks))
     }
 }

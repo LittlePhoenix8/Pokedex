@@ -7,11 +7,13 @@ import cl.littlephoenix.pokedex.data.entities.PokemonEntity
 data class PokemonModel (var id: Int,
                          var name: String,
                          var urlPhoto: String,
-                         var type: List<String>): Parcelable {
+                         var type: List<String>,
+                         var attacks: List<String>): Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
         parcel.readString()!!,
         parcel.readString()!!,
+        parcel.createStringArrayList()!!,
         parcel.createStringArrayList()!!
     )
 
@@ -20,9 +22,12 @@ data class PokemonModel (var id: Int,
         parcel.writeString(name)
         parcel.writeString(urlPhoto)
         parcel.writeStringList(type)
+        parcel.writeStringList(attacks)
     }
 
-    override fun describeContents(): Int = 0
+    override fun describeContents(): Int {
+        return 0
+    }
 
     companion object CREATOR : Parcelable.Creator<PokemonModel> {
         override fun createFromParcel(parcel: Parcel): PokemonModel {
@@ -35,6 +40,7 @@ data class PokemonModel (var id: Int,
     }
 }
 
+//TODO update
 fun PokemonEntity.toModel(): PokemonModel {
-    return PokemonModel(id, name, photoUrl, listOf())
+    return PokemonModel(id, name, photoUrl, listOf(), listOf())
 }

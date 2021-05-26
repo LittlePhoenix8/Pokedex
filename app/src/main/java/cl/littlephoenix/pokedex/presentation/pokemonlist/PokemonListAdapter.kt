@@ -1,6 +1,5 @@
 package cl.littlephoenix.pokedex.presentation.pokemonlist
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
@@ -41,7 +40,6 @@ class PokemonListAdapter(
     override fun getFilter(): Filter = object: Filter() {
         override fun performFiltering(constraint: CharSequence?): FilterResults {
             val text = constraint.toString()
-            Log.e("performFiltering", text)
             if (text.isEmpty()) {
                 pokemonFilterList = pokemonList
             } else {

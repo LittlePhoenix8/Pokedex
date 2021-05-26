@@ -19,6 +19,14 @@ fun String.getPhotoUrl(): String {
     return stringBuilder.toString()
 }
 
+fun Int.getPhotoUrl(): String {
+    val stringBuilder = StringBuilder()
+    stringBuilder.append(BASE_IMG_URL)
+    stringBuilder.append(this.toString())
+    stringBuilder.append(".png")
+    return stringBuilder.toString()
+}
+
 fun String.getNameUppercase(): String {
     return this.replaceFirstChar {
         if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
