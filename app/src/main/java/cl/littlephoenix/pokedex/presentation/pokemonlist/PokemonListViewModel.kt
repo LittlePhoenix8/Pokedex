@@ -20,7 +20,6 @@ class PokemonListViewModel @Inject constructor(
     fun getFirstGenPokemon() = liveData(Dispatchers.IO) {
         emit(Resource.loading(null))
         val local = localRepository.getAllPokemon()
-        Log.d("Local", Gson().toJson(local))
         if (local.isNotEmpty()) {
             val pokemonModelList = local.map { it.toModel() }
             emit(Resource.success(pokemonModelList))
@@ -34,11 +33,8 @@ class PokemonListViewModel @Inject constructor(
                 if (remote.results.isEmpty()) {
                     emit(Resource.error("There are no pokemon to show right now, please try again", null))
                 } else {
-                    Log.d("Remote", Gson().toJson(remote))
                     val pokemonDbList = remote.results.map { it.toEntity() }
                     val pokemonModelList = remote.results.map { it.toModel() }
-                    Log.d("ToLocal", Gson().toJson(pokemonDbList))
-                    Log.d("ToModel", Gson().toJson(pokemonModelList))
                     localRepository.saveAllPokemon(pokemonDbList)
                     emit(Resource.success(pokemonModelList))
                 }

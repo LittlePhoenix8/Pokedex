@@ -8,8 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import cl.littlephoenix.pokedex.databinding.PokemonDetailsFragmentBinding
 import cl.littlephoenix.pokedex.presentation.model.PokemonModel
+import cl.littlephoenix.pokedex.utils.Resource
+import coil.load
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -32,12 +35,52 @@ class PokemonDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         showProgress()
         pokemon = args.pokemon
-        Log.d("PokeDetails", Gson().toJson(pokemon))
-
-        binding.tvPokeName.text = pokemon.name
-        binding.tvPokeNumber.text = pokemon.id.toString()
-        binding.tvPokeType.text = pokemon.type.joinToString("/")
-
+        setInfo()
+        viewModel.getPokemonDetails(pokemon.id).observe(viewLifecycleOwner, {
+            when(it.status) {
+                Resource.Status.LOADING -> showProgress()
+                Resource.Status.ERROR -> {
+                    hideProgress()
+                    Log.e("Error", it.message ?: "error")
+                }
+                Resource.Status.SUCCESS -> {
+                    if (it.data != null) {
+                        pokemon = it.data
+                        setInfo()
+                    }
+                    hideProgress()
+                }
+            }
+        })
+        viewModel.getPokemonSpecies(pokemon.id).observe(viewLifecycleOwner, {
+            when(it.status) {
+                Resource.Status.LOADING -> showProgress()
+                Resource.Status.ERROR -> {
+                    hideProgress()
+                    Log.e("Error", it.message ?: "error")
+                }
+                Resource.Status.SUCCESS -> {
+                    pokemon.evolutions = ArrayList(it.data)
+                    pokemon.evolutions.firstOrNull()?.let { firstPoke ->
+                        pokemon.chainId = firstPoke.chainId
+                    }
+                    setEvolutions()
+                }
+            }
+        })
+        viewModel.getPokemonEncounters(pokemon.id).observe(viewLifecycleOwner, {
+            when(it.status) {
+                Resource.Status.LOADING -> showProgress()
+                Resource.Status.ERROR -> {
+                    hideProgress()
+                    Log.e("Error", it.message ?: "error")
+                }
+                Resource.Status.SUCCESS -> {
+                    pokemon.locations = ArrayList(it.data)
+                    setLocations()
+                }
+            }
+        })
     }
 
     private fun showProgress() {
@@ -48,5 +91,33 @@ class PokemonDetailsFragment : Fragment() {
     private fun hideProgress() {
         binding.progressBar.visibility = View.GONE
         binding.clPokemonDetail.visibility = View.VISIBLE
+    }
+
+    private fun setInfo() {
+        binding.ivPokemon.load(pokemon.urlPhoto)
+        binding.tvPokeName.text = pokemon.name
+        binding.tvPokeNumber.text = pokemon.id.toString()
+        binding.tvPokeType.text = pokemon.type.joinToString("/")
+        binding.rvPokeAttacks.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvPokeAttacks.adapter = PokemonAttacksAdapter(ArrayList(pokemon.attacks))
+        binding.rvPokeSkills.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvPokeSkills.adapter = PokemonAttacksAdapter(ArrayList(pokemon.skills))
+    }
+
+    private fun setEvolutions() {
+        if (pokemon.evolutions.isNotEmpty()) {
+            binding.rvPokeEvolutions.visibility = View.VISIBLE
+            binding.tvPokeEvolutionsLabel.visibility = View.VISIBLE
+            binding.rvPokeEvolutions.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            binding.rvPokeEvolutions.adapter = PokemonEvolutionAdapter(ArrayList(pokemon.evolutions))
+        } else {
+            binding.rvPokeEvolutions.visibility = View.GONE
+            binding.tvPokeEvolutionsLabel.visibility = View.GONE
+        }
+    }
+
+    private fun setLocations() {
+        binding.rvPokeLocations.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvPokeLocations.adapter = PokemonAttacksAdapter(ArrayList(pokemon.locations))
     }
 }

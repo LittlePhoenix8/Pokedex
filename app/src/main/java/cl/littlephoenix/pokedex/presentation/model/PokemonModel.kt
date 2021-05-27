@@ -7,11 +7,21 @@ import cl.littlephoenix.pokedex.data.entities.PokemonEntity
 data class PokemonModel (var id: Int,
                          var name: String,
                          var urlPhoto: String,
-                         var type: List<String>): Parcelable {
+                         var type: List<String>,
+                         var attacks: List<String>,
+                         var skills: List<String>,
+                         var chainId: Int,
+                         var evolutions: List<PokemonModel>,
+                         var locations: List<String>,): Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
         parcel.readString()!!,
         parcel.readString()!!,
+        parcel.createStringArrayList()!!,
+        parcel.createStringArrayList()!!,
+        parcel.createStringArrayList()!!,
+        parcel.readInt(),
+        parcel.createTypedArrayList(CREATOR)!!,
         parcel.createStringArrayList()!!
     )
 
@@ -20,9 +30,16 @@ data class PokemonModel (var id: Int,
         parcel.writeString(name)
         parcel.writeString(urlPhoto)
         parcel.writeStringList(type)
+        parcel.writeStringList(attacks)
+        parcel.writeStringList(skills)
+        parcel.writeInt(chainId)
+        parcel.writeTypedList(evolutions)
+        parcel.writeStringList(locations)
     }
 
-    override fun describeContents(): Int = 0
+    override fun describeContents(): Int {
+        return 0
+    }
 
     companion object CREATOR : Parcelable.Creator<PokemonModel> {
         override fun createFromParcel(parcel: Parcel): PokemonModel {
@@ -35,6 +52,7 @@ data class PokemonModel (var id: Int,
     }
 }
 
+//TODO update
 fun PokemonEntity.toModel(): PokemonModel {
-    return PokemonModel(id, name, photoUrl, listOf())
+    return PokemonModel(id, name, photoUrl, listOf(), listOf(), listOf(), -1, listOf(), listOf())
 }
