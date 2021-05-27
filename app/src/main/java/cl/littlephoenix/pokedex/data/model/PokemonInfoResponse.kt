@@ -35,7 +35,8 @@ fun PokemonInfoResponse.toModel(): PokemonModel {
         attacks = moves.map { it.move.name.getNameUppercase().replace("-", " ") },
         skills = abilities.map { it.ability.name.getNameUppercase().replace("-", " ") },
         chainId = -1,
-        evolutions = listOf())
+        evolutions = listOf(),
+        locations = listOf())
 }
 
 fun Species.toModel(chainId: Int): PokemonModel {
@@ -46,5 +47,6 @@ fun Species.toModel(chainId: Int): PokemonModel {
         attacks = listOf(),
         skills = listOf(),
         chainId = chainId,
-        evolutions = listOf())
+        evolutions = listOf(),
+        locations = listOf())
 }

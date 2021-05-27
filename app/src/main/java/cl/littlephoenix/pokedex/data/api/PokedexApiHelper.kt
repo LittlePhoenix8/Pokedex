@@ -7,4 +7,5 @@ class PokedexApiHelper @Inject constructor(private val pokedexApiService: Pokede
     suspend fun getPokemonDetail(id: Int) = pokedexApiService.getPokemonDetail(id)
     suspend fun getPokemonSpecie(id: Int) = pokedexApiService.getPokemonSpecie(id)
     suspend fun getPokemonEvolutions(id: Int) = pokedexApiService.getPokemonEvolutions(id)
+    suspend fun getPokemonLocation(id: Int) = pokedexApiService.getPokemonLocation(id)
 }

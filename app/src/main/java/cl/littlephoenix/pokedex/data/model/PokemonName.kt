@@ -20,5 +20,6 @@ fun PokemonName.toModel(): PokemonModel {
         attacks = listOf(),
         skills = listOf(),
         chainId = -1,
-        evolutions = listOf())
+        evolutions = listOf(),
+        locations = listOf())
 }

@@ -35,7 +35,6 @@ class PokemonDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         showProgress()
         pokemon = args.pokemon
-        Log.d("PokeDetails", Gson().toJson(pokemon))
         setInfo()
         viewModel.getPokemonDetails(pokemon.id).observe(viewLifecycleOwner, {
             when(it.status) {
@@ -45,7 +44,6 @@ class PokemonDetailsFragment : Fragment() {
                     Log.e("Error", it.message ?: "error")
                 }
                 Resource.Status.SUCCESS -> {
-                    Log.d("PokeD", Gson().toJson(it.data))
                     if (it.data != null) {
                         pokemon = it.data
                         setInfo()
@@ -67,6 +65,19 @@ class PokemonDetailsFragment : Fragment() {
                         pokemon.chainId = firstPoke.chainId
                     }
                     setEvolutions()
+                }
+            }
+        })
+        viewModel.getPokemonEncounters(pokemon.id).observe(viewLifecycleOwner, {
+            when(it.status) {
+                Resource.Status.LOADING -> showProgress()
+                Resource.Status.ERROR -> {
+                    hideProgress()
+                    Log.e("Error", it.message ?: "error")
+                }
+                Resource.Status.SUCCESS -> {
+                    pokemon.locations = ArrayList(it.data)
+                    setLocations()
                 }
             }
         })
@@ -103,5 +114,10 @@ class PokemonDetailsFragment : Fragment() {
             binding.rvPokeEvolutions.visibility = View.GONE
             binding.tvPokeEvolutionsLabel.visibility = View.GONE
         }
+    }
+
+    private fun setLocations() {
+        binding.rvPokeLocations.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvPokeLocations.adapter = PokemonAttacksAdapter(ArrayList(pokemon.locations))
     }
 }

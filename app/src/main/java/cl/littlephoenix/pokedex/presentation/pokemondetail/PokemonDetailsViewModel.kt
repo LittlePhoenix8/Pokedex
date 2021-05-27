@@ -9,6 +9,7 @@ import cl.littlephoenix.pokedex.data.repository.PokedexRepository
 import cl.littlephoenix.pokedex.presentation.model.PokemonModel
 import cl.littlephoenix.pokedex.utils.Resource
 import cl.littlephoenix.pokedex.utils.getIdFromUrl
+import cl.littlephoenix.pokedex.utils.getNameUppercase
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -38,6 +39,26 @@ class PokemonDetailsViewModel @Inject constructor(
                 emit(Resource.error("Ups, there was an error, please try again", null))
             }
         }
+
+    fun getPokemonEncounters(pokemonId: Int) = liveData(Dispatchers.IO) {
+        emit(Resource.loading(null))
+        //TODO check details local
+        try {
+            val remote = pokedexRepository.getPokemonLocation(pokemonId)
+            if (remote == null) {
+                Log.e("NetworkError", "network error")
+                emit(Resource.error("Ups, there was an error, please try again", null))
+            } else {
+                Log.d("Remote", Gson().toJson(remote))
+                //TODO update database
+                val locations = remote.map { it.location_area.name.getNameUppercase().replace("-", " ") }
+                emit(Resource.success(locations))
+            }
+        } catch (e: Exception) {
+            Log.e("Ex", e.message, e)
+            emit(Resource.error("Ups, there was an error, please try again", null))
+        }
+    }
 
     fun getPokemonSpecies(pokemonId: Int) = liveData(Dispatchers.IO) {
         emit(Resource.loading(null))
