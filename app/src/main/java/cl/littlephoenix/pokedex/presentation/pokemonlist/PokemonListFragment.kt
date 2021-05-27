@@ -56,6 +56,13 @@ class PokemonListFragment : Fragment() {
             findNavController()
                 .navigate(PokemonListFragmentDirections.goToPokemonDetails(pokemon = pokemon))
         }
+        viewModel.getTypes().observe(viewLifecycleOwner, {
+            if (it.status == Resource.Status.SUCCESS) {
+                Log.d("PokeTypes", "Saved types on db")
+            } else {
+                Log.e("Error", it.message ?: "error")
+            }
+        })
         viewModel.getFirstGenPokemon().observe(viewLifecycleOwner, {
             when(it.status) {
                 Resource.Status.LOADING -> showProgress()

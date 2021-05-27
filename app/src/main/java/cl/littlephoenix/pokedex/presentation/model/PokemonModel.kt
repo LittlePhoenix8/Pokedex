@@ -12,7 +12,7 @@ data class PokemonModel (var id: Int,
                          var skills: List<String>,
                          var chainId: Int,
                          var evolutions: List<PokemonModel>,
-                         var locations: List<String>,): Parcelable {
+                         var locations: List<String>): Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
         parcel.readString()!!,

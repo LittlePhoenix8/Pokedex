@@ -1,7 +1,7 @@
 package cl.littlephoenix.pokedex.di
 
 import cl.littlephoenix.pokedex.data.api.PokedexApiService
-import cl.littlephoenix.pokedex.data.local.PokemonDao
+import cl.littlephoenix.pokedex.data.local.*
 import cl.littlephoenix.pokedex.data.repository.PokedexLocalRepository
 import cl.littlephoenix.pokedex.data.repository.PokedexRepository
 import dagger.Module
@@ -16,5 +16,10 @@ object DataRepositoryModule {
     fun provideDataRepository(apiService: PokedexApiService) = PokedexRepository(apiService)
 
     @Provides
-    fun provideLocalRepository(pokemonDao: PokemonDao) = PokedexLocalRepository(pokemonDao)
+    fun provideLocalRepository(pokemonDao: PokemonDao,
+                               typeDao: TypeDao,
+                               attackDao: AttackDao,
+                               locationDao: LocationDao,
+                               skillDao: SkillDao) =
+        PokedexLocalRepository(pokemonDao, typeDao, attackDao, locationDao, skillDao)
 }

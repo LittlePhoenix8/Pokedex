@@ -1,10 +1,6 @@
 package cl.littlephoenix.pokedex.data.api
 
-import cl.littlephoenix.pokedex.data.model.PokemonLocationsResponse
-import cl.littlephoenix.pokedex.data.model.PokemonEvolutionResponse
-import cl.littlephoenix.pokedex.data.model.PokemonInfoResponse
-import cl.littlephoenix.pokedex.data.model.PokemonResponse
-import cl.littlephoenix.pokedex.data.model.PokemonSpecieResponse
+import cl.littlephoenix.pokedex.data.model.*
 import retrofit2.http.GET
 import retrofit2.http.Path
 
@@ -13,6 +9,9 @@ interface PokedexApiService {
         const val BASE_URL = "https://pokeapi.co/api/v2/"
         const val BASE_IMG_URL = "https://pokeres.bastionbot.org/images/pokemon/"
     }
+
+    @GET("type")
+    suspend fun getTypes(): TypeResponse?
 
     @GET("pokemon?limit=151")
     suspend fun getFirstGenPokemon(): PokemonResponse?

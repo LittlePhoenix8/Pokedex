@@ -15,7 +15,7 @@ data class PokemonInfoResponse(var id: Int,
 
 data class PokemonTypes(var slot: Int, var type: Type)
 
-data class Type(var name: String)
+data class Type(var name: String, var url: String)
 
 data class Abilities(var ability: Ability)
 

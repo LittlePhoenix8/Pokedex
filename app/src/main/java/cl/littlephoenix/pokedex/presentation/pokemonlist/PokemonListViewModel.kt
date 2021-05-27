@@ -44,4 +44,19 @@ class PokemonListViewModel @Inject constructor(
             emit(Resource.error("Ups, there was an error, please try again", null))
         }
     }
+    fun getTypes() = liveData(Dispatchers.IO) {
+        try {
+            val remote = pokedexRepository.getTypes()
+            if (remote == null) {
+                Log.e("NetworkError", "network error")
+                emit(Resource.error("Ups, there was an error, please try again", null))
+            } else {
+                localRepository.saveAllTypes(remote.toEntity())
+                emit(Resource.success(remote))
+            }
+        } catch (e: Exception) {
+            Log.e("Ex", e.message, e)
+            emit(Resource.error("Ups, there was an error, please try again", null))
+        }
+    }
 }
