@@ -64,6 +64,7 @@ class PokemonListFragment : Fragment() {
                     Log.e("Error", it.message ?: "error")
                 }
                 Resource.Status.SUCCESS -> {
+                    pokemonList.clear()
                     pokemonList.addAll(it.data?: ArrayList())
                     (binding.rvPokemon.adapter as PokemonListAdapter).notifyDataSetChanged()
                     hideProgress()

@@ -58,13 +58,14 @@ class PokemonDetailsViewModel @Inject constructor(
                     //TODO update database
                     val result = ArrayList<PokemonModel>()
                     if (evolutions != null) {
-                        for (poke in evolutions.chain.evolves_to) {
-                            Log.e("PokeEvolution", Gson().toJson(poke.species))
-                            result.add(poke.species.toModel(chainId))
-                            if (poke.evolves_to.isNotEmpty()) {
-                                for (p in poke.evolves_to) {
-                                    Log.e("PokeEvolution", Gson().toJson(p.species))
-                                    result.add(p.species.toModel(chainId))
+                        if (evolutions.chain.evolves_to.isNotEmpty()) {
+                            result.add(evolutions.chain.species.toModel(chainId))
+                            for (poke in evolutions.chain.evolves_to) {
+                                result.add(poke.species.toModel(chainId))
+                                if (poke.evolves_to.isNotEmpty()) {
+                                    for (p in poke.evolves_to) {
+                                        result.add(p.species.toModel(chainId))
+                                    }
                                 }
                             }
                         }

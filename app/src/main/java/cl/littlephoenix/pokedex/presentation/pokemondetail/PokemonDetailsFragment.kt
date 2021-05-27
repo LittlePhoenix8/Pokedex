@@ -11,7 +11,6 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import cl.littlephoenix.pokedex.databinding.PokemonDetailsFragmentBinding
 import cl.littlephoenix.pokedex.presentation.model.PokemonModel
-import cl.littlephoenix.pokedex.presentation.pokemonlist.PokemonListAdapter
 import cl.littlephoenix.pokedex.utils.Resource
 import coil.load
 import com.google.gson.Gson
@@ -92,11 +91,17 @@ class PokemonDetailsFragment : Fragment() {
         binding.rvPokeAttacks.adapter = PokemonAttacksAdapter(ArrayList(pokemon.attacks))
         binding.rvPokeSkills.layoutManager = LinearLayoutManager(requireContext())
         binding.rvPokeSkills.adapter = PokemonAttacksAdapter(ArrayList(pokemon.skills))
-        Log.d("Skills", Gson().toJson(pokemon.chainId))
     }
 
     private fun setEvolutions() {
-        Log.e("Evolves", Gson().toJson(pokemon.evolutions))
-        //TODO evolutions adapter
+        if (pokemon.evolutions.isNotEmpty()) {
+            binding.rvPokeEvolutions.visibility = View.VISIBLE
+            binding.tvPokeEvolutionsLabel.visibility = View.VISIBLE
+            binding.rvPokeEvolutions.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            binding.rvPokeEvolutions.adapter = PokemonEvolutionAdapter(ArrayList(pokemon.evolutions))
+        } else {
+            binding.rvPokeEvolutions.visibility = View.GONE
+            binding.tvPokeEvolutionsLabel.visibility = View.GONE
+        }
     }
 }
