@@ -1,5 +1,10 @@
 package cl.littlephoenix.pokedex.data.model
 
+import androidx.room.ColumnInfo
+import androidx.room.PrimaryKey
+import cl.littlephoenix.pokedex.data.entities.AttackEntity
+import cl.littlephoenix.pokedex.data.entities.PokemonEntity
+import cl.littlephoenix.pokedex.data.entities.SkillEntity
 import cl.littlephoenix.pokedex.presentation.model.PokemonModel
 import cl.littlephoenix.pokedex.utils.getIdFromUrl
 import cl.littlephoenix.pokedex.utils.getNameUppercase
@@ -39,6 +44,13 @@ fun PokemonInfoResponse.toModel(): PokemonModel {
         locations = listOf())
 }
 
+fun PokemonInfoResponse.toEntity(): PokemonEntity {
+    return PokemonEntity(id = id,
+        name = name.getNameUppercase(),
+        photoUrl = id.getPhotoUrl(),
+        chainId = -1)
+}
+
 fun Species.toModel(chainId: Int): PokemonModel {
     return PokemonModel(id = url.getIdFromUrl(),
         name = name.getNameUppercase(),
@@ -49,4 +61,12 @@ fun Species.toModel(chainId: Int): PokemonModel {
         chainId = chainId,
         evolutions = listOf(),
         locations = listOf())
+}
+
+fun Move.toEntity(id: Int): AttackEntity {
+    return AttackEntity(id = 0, pokemonId = id, attack = name.replace("-", "").getNameUppercase())
+}
+
+fun Ability.toEntity(id: Int): SkillEntity {
+    return SkillEntity(id = 0, pokemonId = id, skill = name.replace("-", "").getNameUppercase())
 }

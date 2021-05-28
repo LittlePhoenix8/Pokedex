@@ -9,5 +9,5 @@ interface AttackDao {
     suspend fun insert(attacks: List<AttackEntity>)
 
     @Query("SELECT * FROM attack WHERE pokemon_id is (:id)")
-    fun getAttacksByPokemon(id: Int): List<AttackEntity>
+    fun getAttacksByPokemon(id: Int): List<AttackEntity>?
 }
