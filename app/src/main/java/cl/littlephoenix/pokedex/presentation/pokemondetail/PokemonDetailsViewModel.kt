@@ -68,6 +68,7 @@ class PokemonDetailsViewModel @Inject constructor(
     fun getPokemonEncounters(pokemonId: Int) = liveData(Dispatchers.IO) {
         emit(Resource.loading(null))
         val local = localRepository.getLocationsByPokemon(pokemonId)
+        Log.d("Location D", Gson().toJson(local))
         if (local != null) {
             emit(Resource.success(local.map { it.location }))
         }
@@ -79,7 +80,7 @@ class PokemonDetailsViewModel @Inject constructor(
             } else {
                 Log.d("Remote", Gson().toJson(remote))
                 val locations = remote.map { it.location_area.name.getNameUppercase().replace("-", " ") }
-                val locationsEntity = remote.map { it.location_area.toEntity() }
+                val locationsEntity = remote.map { it.location_area.toEntity(pokemonId) }
                 Log.d("locationsEntity", Gson().toJson(locationsEntity))
                 localRepository.saveLocations(locationsEntity)
                 emit(Resource.success(locations))
