@@ -117,7 +117,14 @@ class PokemonDetailsFragment : Fragment() {
     }
 
     private fun setLocations() {
-        binding.rvPokeLocations.layoutManager = LinearLayoutManager(requireContext())
-        binding.rvPokeLocations.adapter = PokemonAttacksAdapter(ArrayList(pokemon.locations))
+        if (pokemon.locations.isEmpty()) {
+            binding.tvPokeLocationsLabel.visibility = View.GONE
+            binding.rvPokeLocations.visibility = View.GONE
+        } else {
+            binding.tvPokeLocationsLabel.visibility = View.VISIBLE
+            binding.rvPokeLocations.visibility = View.VISIBLE
+            binding.rvPokeLocations.layoutManager = LinearLayoutManager(requireContext())
+            binding.rvPokeLocations.adapter = PokemonAttacksAdapter(ArrayList(pokemon.locations))
+        }
     }
 }

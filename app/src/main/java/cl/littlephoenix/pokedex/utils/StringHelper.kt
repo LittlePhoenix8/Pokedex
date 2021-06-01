@@ -28,7 +28,7 @@ fun Int.getPhotoUrl(): String {
 }
 
 fun String.getNameUppercase(): String {
-    return this.replaceFirstChar {
+    return this.replace("-", " ").replaceFirstChar {
         if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
     }
 }

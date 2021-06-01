@@ -10,9 +10,3 @@ data class TypeEntity(
     @PrimaryKey @ColumnInfo(name = "id_type") val id: Int,
     @ColumnInfo(name = "type_name") val type: String
 )
-
-@Entity(primaryKeys = ["pokemonId", "typeId"])
-data class PokemonTypeCrossRef(
-    val pokemonId: Int,
-    val typeId: Int
-)

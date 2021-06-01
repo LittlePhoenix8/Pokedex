@@ -8,7 +8,6 @@ import cl.littlephoenix.pokedex.data.repository.PokedexLocalRepository
 import cl.littlephoenix.pokedex.data.repository.PokedexRepository
 import cl.littlephoenix.pokedex.presentation.model.toModel
 import cl.littlephoenix.pokedex.utils.Resource
-import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
@@ -51,7 +50,7 @@ class PokemonListViewModel @Inject constructor(
                 Log.e("NetworkError", "network error")
                 emit(Resource.error("Ups, there was an error, please try again", null))
             } else {
-                localRepository.saveAllTypes(remote.toEntity())
+                localRepository.saveTypes(remote.toEntity())
                 emit(Resource.success(remote))
             }
         } catch (e: Exception) {

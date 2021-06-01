@@ -12,5 +12,5 @@ interface SkillDao {
     suspend fun insert(skills: List<SkillEntity>)
 
     @Query("SELECT * FROM skill WHERE pokemon_id is (:id)")
-    fun getSkillsByPokemon(id: Int): List<SkillEntity>?
+    fun getSkillsByPokemon(id: Int): List<SkillEntity>
 }

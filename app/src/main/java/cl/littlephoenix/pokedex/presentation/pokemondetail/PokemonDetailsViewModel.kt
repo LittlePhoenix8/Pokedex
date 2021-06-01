@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import cl.littlephoenix.pokedex.data.model.toEntity
 import cl.littlephoenix.pokedex.data.model.toModel
+import cl.littlephoenix.pokedex.data.model.toPokeTypeEntity
 import cl.littlephoenix.pokedex.data.repository.PokedexLocalRepository
 import cl.littlephoenix.pokedex.data.repository.PokedexRepository
 import cl.littlephoenix.pokedex.presentation.model.PokemonModel
@@ -26,12 +27,16 @@ class PokemonDetailsViewModel @Inject constructor(
             val local = localRepository.getPokemon(pokemonId)
             val attacks = localRepository.getAttacksByPokemon(pokemonId)
             val skills = localRepository.getSkillsByPokemon(pokemonId)
-            Log.d("LocalD", Gson().toJson(local))
+            val pokeType = localRepository.getPokeTypesByPokemon(pokemonId)
+            val types = localRepository.getTypesById(pokeType.map { it.typeId })
+            Log.d("pokemon D", Gson().toJson(local))
             Log.d("attacks D", Gson().toJson(attacks))
             Log.d("skills D", Gson().toJson(skills))
-            if (local != null && attacks != null && skills != null) {
-                //TODO get type
+            Log.d("pokeType D", Gson().toJson(pokeType))
+            Log.d("types D", Gson().toJson(types))
+            if (local != null && attacks.isNotEmpty() && skills.isNotEmpty() && types.isNotEmpty()) {
                 val modelLocal = local.toModel()
+                modelLocal.type = types.map { it.type }
                 modelLocal.attacks = attacks.map { it.attack }
                 modelLocal.skills = skills.map { it.skill }
                 emit(Resource.success(modelLocal))
@@ -48,15 +53,17 @@ class PokemonDetailsViewModel @Inject constructor(
                     Log.d("ToModelD", Gson().toJson(pokemonModel))
                     Log.d("toEntityD", Gson().toJson(pokemonEntity))
 
-                    //TODO save type
                     val attacksEntity = remote.moves.map { it.move.toEntity(pokemonId) }
                     val skillsEntity = remote.abilities.map { it.ability.toEntity(pokemonId) }
+                    val pokeTypeEntity = remote.types.map { it.type.toPokeTypeEntity(pokemonId) }
                     Log.d("attacksEntity", Gson().toJson(attacksEntity))
                     Log.d("skillsEntity", Gson().toJson(skillsEntity))
+                    Log.d("pokeTypeEntity", Gson().toJson(pokeTypeEntity))
 
                     localRepository.updateAllPokemon(listOf(pokemonEntity))
                     localRepository.saveAttacks(attacksEntity)
                     localRepository.saveSkills(skillsEntity)
+                    localRepository.savePokeTypes(pokeTypeEntity)
                     emit(Resource.success(pokemonModel))
                 }
             } catch (e: Exception) {
@@ -79,7 +86,7 @@ class PokemonDetailsViewModel @Inject constructor(
                 emit(Resource.error("Ups, there was an error, please try again", null))
             } else {
                 Log.d("Remote", Gson().toJson(remote))
-                val locations = remote.map { it.location_area.name.getNameUppercase().replace("-", " ") }
+                val locations = remote.map { it.location_area.name.getNameUppercase() }
                 val locationsEntity = remote.map { it.location_area.toEntity(pokemonId) }
                 Log.d("locationsEntity", Gson().toJson(locationsEntity))
                 localRepository.saveLocations(locationsEntity)

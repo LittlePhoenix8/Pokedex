@@ -26,6 +26,10 @@ object DatabaseModule {
 
     @Singleton
     @Provides
+    fun providePokemonTypeCrossRefDao(database: PokemonDatabase) = database.getPokemonTypeCrossRefDao()
+
+    @Singleton
+    @Provides
     fun provideAttackDao(database: PokemonDatabase) = database.getAttackDao()
 
     @Singleton

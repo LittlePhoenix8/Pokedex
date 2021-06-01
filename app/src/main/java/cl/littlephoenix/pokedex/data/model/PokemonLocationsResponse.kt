@@ -8,5 +8,5 @@ data class PokemonLocationsResponse(var location_area: LocationArea)
 data class LocationArea(var name: String)
 
 fun LocationArea.toEntity(id: Int): LocationEntity {
-    return LocationEntity(id = 0, pokemonId = id, location = name.replace("-", " ").getNameUppercase())
+    return LocationEntity(id = 0, pokemonId = id, location = name.getNameUppercase())
 }
