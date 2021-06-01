@@ -37,22 +37,21 @@ data class PokemonModel (var id: Int,
         parcel.writeStringList(locations)
     }
 
-    override fun describeContents(): Int {
-        return 0
-    }
+    override fun describeContents(): Int = 0
 
     companion object CREATOR : Parcelable.Creator<PokemonModel> {
-        override fun createFromParcel(parcel: Parcel): PokemonModel {
-            return PokemonModel(parcel)
-        }
-
-        override fun newArray(size: Int): Array<PokemonModel?> {
-            return arrayOfNulls(size)
-        }
+        override fun createFromParcel(parcel: Parcel): PokemonModel = PokemonModel(parcel)
+        override fun newArray(size: Int): Array<PokemonModel?> = arrayOfNulls(size)
     }
 }
-
-//TODO update
 fun PokemonEntity.toModel(): PokemonModel {
-    return PokemonModel(id, name, photoUrl, listOf(), listOf(), listOf(), -1, listOf(), listOf())
+    return PokemonModel(id = id,
+        name = name,
+        urlPhoto = photoUrl,
+        type = listOf(),
+        attacks = listOf(),
+        skills = listOf(),
+        chainId = -1,
+        evolutions = listOf(),
+        locations = listOf())
 }
