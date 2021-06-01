@@ -11,7 +11,3 @@ data class PokemonEntity(
     @ColumnInfo(name = "name_pokemon")val name: String,
     @ColumnInfo(name = "photo_pokemon")val photoUrl: String,
     @ColumnInfo(name = "chain_id")val chainId: Int)
-
-/*
-var evolutions: List<PokemonModel>,
-*/

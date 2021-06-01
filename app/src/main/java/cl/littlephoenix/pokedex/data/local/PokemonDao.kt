@@ -5,7 +5,7 @@ import cl.littlephoenix.pokedex.data.entities.PokemonEntity
 
 @Dao
 interface PokemonDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(pokemon: List<PokemonEntity>)
 
     @Update

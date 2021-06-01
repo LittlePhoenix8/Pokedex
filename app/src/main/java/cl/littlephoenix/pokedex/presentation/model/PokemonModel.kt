@@ -51,7 +51,11 @@ fun PokemonEntity.toModel(): PokemonModel {
         type = listOf(),
         attacks = listOf(),
         skills = listOf(),
-        chainId = -1,
+        chainId = chainId,
         evolutions = listOf(),
         locations = listOf())
+}
+
+fun PokemonModel.toEntity(): PokemonEntity {
+    return PokemonEntity(id = id, name = name, photoUrl = urlPhoto, chainId = chainId)
 }

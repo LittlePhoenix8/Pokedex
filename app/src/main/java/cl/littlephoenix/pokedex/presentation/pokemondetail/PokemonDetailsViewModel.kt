@@ -9,6 +9,7 @@ import cl.littlephoenix.pokedex.data.model.toPokeTypeEntity
 import cl.littlephoenix.pokedex.data.repository.PokedexLocalRepository
 import cl.littlephoenix.pokedex.data.repository.PokedexRepository
 import cl.littlephoenix.pokedex.presentation.model.PokemonModel
+import cl.littlephoenix.pokedex.presentation.model.toEntity
 import cl.littlephoenix.pokedex.presentation.model.toModel
 import cl.littlephoenix.pokedex.utils.Resource
 import cl.littlephoenix.pokedex.utils.getIdFromUrl
@@ -29,11 +30,8 @@ class PokemonDetailsViewModel @Inject constructor(
             val skills = localRepository.getSkillsByPokemon(pokemonId)
             val pokeType = localRepository.getPokeTypesByPokemon(pokemonId)
             val types = localRepository.getTypesById(pokeType.map { it.typeId })
-            Log.d("pokemon D", Gson().toJson(local))
-            Log.d("attacks D", Gson().toJson(attacks))
-            Log.d("skills D", Gson().toJson(skills))
-            Log.d("pokeType D", Gson().toJson(pokeType))
-            Log.d("types D", Gson().toJson(types))
+            //TODO get evolutions from db
+            Log.d("DetailLocal", Gson().toJson(local))
             if (local != null && attacks.isNotEmpty() && skills.isNotEmpty() && types.isNotEmpty()) {
                 val modelLocal = local.toModel()
                 modelLocal.type = types.map { it.type }
@@ -43,23 +41,45 @@ class PokemonDetailsViewModel @Inject constructor(
             }
             try {
                 val remote = pokedexRepository.getPokemonDetail(pokemonId)
+                val remoteSpecie = pokedexRepository.getPokemonSpecie(pokemonId)
+                var chainId = -1
+                val evolutionList = ArrayList<PokemonModel>()
+                if (remoteSpecie == null) {
+                    Log.e("NetworkError", "network error")
+                    emit(Resource.error("Ups, there was an error, please try again", null))
+                } else {
+                    chainId = remoteSpecie.evolution_chain.url.getIdFromUrl()
+                    val evolutions = pokedexRepository.getPokemonEvolutions(chainId)
+                    Log.d("Evolutions", Gson().toJson(evolutions))
+                    //TODO save evolutions to db
+                    if (evolutions != null) {
+                        if (evolutions.chain.evolves_to.isNotEmpty()) {
+                            evolutionList.add(evolutions.chain.species.toModel(chainId))
+                            for (poke in evolutions.chain.evolves_to) {
+                                evolutionList.add(poke.species.toModel(chainId))
+                                if (poke.evolves_to.isNotEmpty()) {
+                                    for (p in poke.evolves_to) {
+                                        evolutionList.add(p.species.toModel(chainId))
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    Log.d("EvolsToModel", Gson().toJson(evolutionList))
+                    Log.d("EvolsToModel", evolutionList.size.toString())
+                }
                 if (remote == null) {
                     Log.e("NetworkError", "network error")
                     emit(Resource.error("Ups, there was an error, please try again", null))
                 } else {
-                    Log.d("RemoteD", Gson().toJson(remote))
-                    val pokemonModel = remote.toModel()
-                    val pokemonEntity = remote.toEntity()
-                    Log.d("ToModelD", Gson().toJson(pokemonModel))
-                    Log.d("toEntityD", Gson().toJson(pokemonEntity))
-
+                    Log.d("DetailRemote", Gson().toJson(remote))
+                    val pokemonModel = remote.toModel(chainId)
+                    pokemonModel.evolutions = evolutionList
+                    val pokemonEntity = pokemonModel.toEntity()
                     val attacksEntity = remote.moves.map { it.move.toEntity(pokemonId) }
                     val skillsEntity = remote.abilities.map { it.ability.toEntity(pokemonId) }
                     val pokeTypeEntity = remote.types.map { it.type.toPokeTypeEntity(pokemonId) }
-                    Log.d("attacksEntity", Gson().toJson(attacksEntity))
-                    Log.d("skillsEntity", Gson().toJson(skillsEntity))
-                    Log.d("pokeTypeEntity", Gson().toJson(pokeTypeEntity))
-
+                    //TODO update evolutions database
                     localRepository.updateAllPokemon(listOf(pokemonEntity))
                     localRepository.saveAttacks(attacksEntity)
                     localRepository.saveSkills(skillsEntity)
@@ -75,7 +95,7 @@ class PokemonDetailsViewModel @Inject constructor(
     fun getPokemonEncounters(pokemonId: Int) = liveData(Dispatchers.IO) {
         emit(Resource.loading(null))
         val local = localRepository.getLocationsByPokemon(pokemonId)
-        Log.d("Location D", Gson().toJson(local))
+        Log.d("LocationLocal", Gson().toJson(local))
         if (local != null) {
             emit(Resource.success(local.map { it.location }))
         }
@@ -85,56 +105,11 @@ class PokemonDetailsViewModel @Inject constructor(
                 Log.e("NetworkError", "network error")
                 emit(Resource.error("Ups, there was an error, please try again", null))
             } else {
-                Log.d("Remote", Gson().toJson(remote))
+                Log.d("LocationRemote", Gson().toJson(remote))
                 val locations = remote.map { it.location_area.name.getNameUppercase() }
                 val locationsEntity = remote.map { it.location_area.toEntity(pokemonId) }
-                Log.d("locationsEntity", Gson().toJson(locationsEntity))
                 localRepository.saveLocations(locationsEntity)
                 emit(Resource.success(locations))
-            }
-        } catch (e: Exception) {
-            Log.e("Ex", e.message, e)
-            emit(Resource.error("Ups, there was an error, please try again", null))
-        }
-    }
-
-    fun getPokemonSpecies(pokemonId: Int) = liveData(Dispatchers.IO) {
-        emit(Resource.loading(null))
-        //TODO check evolutions local
-        try {
-            val remote = pokedexRepository.getPokemonSpecie(pokemonId)
-            if (remote == null) {
-                Log.e("NetworkError", "network error")
-                emit(Resource.error("Ups, there was an error, please try again", null))
-            } else {
-                Log.d("Remote", Gson().toJson(remote))
-                //TODO update evolutions database
-                val chainId = remote.evolution_chain.url.getIdFromUrl()
-                Log.d("ChainId", chainId.toString())
-                try {
-                    val evolutions = pokedexRepository.getPokemonEvolutions(chainId)
-                    Log.d("Evolutions", Gson().toJson(evolutions))
-                    //TODO update evolutions database
-                    val result = ArrayList<PokemonModel>()
-                    if (evolutions != null) {
-                        if (evolutions.chain.evolves_to.isNotEmpty()) {
-                            result.add(evolutions.chain.species.toModel(chainId))
-                            for (poke in evolutions.chain.evolves_to) {
-                                result.add(poke.species.toModel(chainId))
-                                if (poke.evolves_to.isNotEmpty()) {
-                                    for (p in poke.evolves_to) {
-                                        result.add(p.species.toModel(chainId))
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    Log.d("ToModel", Gson().toJson(result))
-                    emit(Resource.success(result))
-                } catch (e: Exception) {
-                    Log.e("Ex", e.message, e)
-                    emit(Resource.error("Ups, there was an error, please try again", null))
-                }
             }
         } catch (e: Exception) {
             Log.e("Ex", e.message, e)

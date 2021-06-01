@@ -32,14 +32,14 @@ data class Move(var name: String)
 
 data class Species(var name: String, var url: String)
 
-fun PokemonInfoResponse.toModel(): PokemonModel {
+fun PokemonInfoResponse.toModel(chainId: Int): PokemonModel {
     return PokemonModel(id = id,
         name = name.getNameUppercase(),
         urlPhoto = id.getPhotoUrl(),
         type = types.map { it.type.name.getNameUppercase() },
         attacks = moves.map { it.move.name.getNameUppercase() },
         skills = abilities.map { it.ability.name.getNameUppercase() },
-        chainId = -1,
+        chainId = chainId,
         evolutions = listOf(),
         locations = listOf())
 }

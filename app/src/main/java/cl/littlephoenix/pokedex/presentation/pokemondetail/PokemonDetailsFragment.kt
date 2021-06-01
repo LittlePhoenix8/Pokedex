@@ -47,12 +47,13 @@ class PokemonDetailsFragment : Fragment() {
                     if (it.data != null) {
                         pokemon = it.data
                         setInfo()
+                        setEvolutions()
                     }
                     hideProgress()
                 }
             }
         })
-        viewModel.getPokemonSpecies(pokemon.id).observe(viewLifecycleOwner, {
+        /*viewModel.getPokemonSpecies(pokemon.id, pokemon).observe(viewLifecycleOwner, {
             when(it.status) {
                 Resource.Status.LOADING -> showProgress()
                 Resource.Status.ERROR -> {
@@ -67,7 +68,7 @@ class PokemonDetailsFragment : Fragment() {
                     setEvolutions()
                 }
             }
-        })
+        })*/
         viewModel.getPokemonEncounters(pokemon.id).observe(viewLifecycleOwner, {
             when(it.status) {
                 Resource.Status.LOADING -> showProgress()
