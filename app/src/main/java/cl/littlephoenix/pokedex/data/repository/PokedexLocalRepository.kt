@@ -6,6 +6,7 @@ import javax.inject.Inject
 
 class PokedexLocalRepository @Inject constructor(
     private val pokemonDao: PokemonDao,
+    private val pokemonEvolutionDao: PokemonEvolutionDao,
     private val typeDao: TypeDao,
     private val pokemonTypeCrossRefDao: PokemonTypeCrossRefDao,
     private val attackDao: AttackDao,
@@ -16,6 +17,10 @@ class PokedexLocalRepository @Inject constructor(
     suspend fun getPokemon(id: Int) = pokemonDao.getPokemonById(id)
     suspend fun saveAllPokemon(pokemonList: List<PokemonEntity>) = pokemonDao.insert(pokemonList)
     suspend fun updateAllPokemon(pokemonList: List<PokemonEntity>) = pokemonDao.update(pokemonList)
+
+    //pokemon evolutions
+    suspend fun getPokemonEvolutions(id: Int) = pokemonEvolutionDao.getPokemonEvolutionsById(id)
+    suspend fun savePokemonEvolutions(evolutions: List<PokemonEvolutionEntity>) = pokemonEvolutionDao.insertPokeEvols(evolutions)
 
     //type
     suspend fun saveTypes(typeList: List<TypeEntity>) = typeDao.insert(typeList)

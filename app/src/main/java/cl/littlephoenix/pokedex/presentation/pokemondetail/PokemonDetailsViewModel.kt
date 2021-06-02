@@ -10,6 +10,7 @@ import cl.littlephoenix.pokedex.data.repository.PokedexLocalRepository
 import cl.littlephoenix.pokedex.data.repository.PokedexRepository
 import cl.littlephoenix.pokedex.presentation.model.PokemonModel
 import cl.littlephoenix.pokedex.presentation.model.toEntity
+import cl.littlephoenix.pokedex.presentation.model.toEvolutionEntity
 import cl.littlephoenix.pokedex.presentation.model.toModel
 import cl.littlephoenix.pokedex.utils.Resource
 import cl.littlephoenix.pokedex.utils.getIdFromUrl
@@ -30,13 +31,14 @@ class PokemonDetailsViewModel @Inject constructor(
             val skills = localRepository.getSkillsByPokemon(pokemonId)
             val pokeType = localRepository.getPokeTypesByPokemon(pokemonId)
             val types = localRepository.getTypesById(pokeType.map { it.typeId })
-            //TODO get evolutions from db
+            val evols = localRepository.getPokemonEvolutions(pokemonId)
             Log.d("DetailLocal", Gson().toJson(local))
             if (local != null && attacks.isNotEmpty() && skills.isNotEmpty() && types.isNotEmpty()) {
                 val modelLocal = local.toModel()
                 modelLocal.type = types.map { it.type }
                 modelLocal.attacks = attacks.map { it.attack }
                 modelLocal.skills = skills.map { it.skill }
+                modelLocal.evolutions = evols.map { it.toModel() }
                 emit(Resource.success(modelLocal))
             }
             try {
@@ -51,7 +53,6 @@ class PokemonDetailsViewModel @Inject constructor(
                     chainId = remoteSpecie.evolution_chain.url.getIdFromUrl()
                     val evolutions = pokedexRepository.getPokemonEvolutions(chainId)
                     Log.d("Evolutions", Gson().toJson(evolutions))
-                    //TODO save evolutions to db
                     if (evolutions != null) {
                         if (evolutions.chain.evolves_to.isNotEmpty()) {
                             evolutionList.add(evolutions.chain.species.toModel(chainId))
@@ -65,8 +66,10 @@ class PokemonDetailsViewModel @Inject constructor(
                             }
                         }
                     }
-                    Log.d("EvolsToModel", Gson().toJson(evolutionList))
-                    Log.d("EvolsToModel", evolutionList.size.toString())
+                    Log.d("EvolutionsToModel", Gson().toJson(evolutionList))
+                    Log.d("EvolutionsSize", evolutionList.size.toString())
+                    val evolutionEntity = evolutionList.map { it.toEvolutionEntity(pokemonId) }
+                    localRepository.savePokemonEvolutions(evolutionEntity)
                 }
                 if (remote == null) {
                     Log.e("NetworkError", "network error")
@@ -79,7 +82,6 @@ class PokemonDetailsViewModel @Inject constructor(
                     val attacksEntity = remote.moves.map { it.move.toEntity(pokemonId) }
                     val skillsEntity = remote.abilities.map { it.ability.toEntity(pokemonId) }
                     val pokeTypeEntity = remote.types.map { it.type.toPokeTypeEntity(pokemonId) }
-                    //TODO update evolutions database
                     localRepository.updateAllPokemon(listOf(pokemonEntity))
                     localRepository.saveAttacks(attacksEntity)
                     localRepository.saveSkills(skillsEntity)

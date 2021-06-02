@@ -22,6 +22,10 @@ object DatabaseModule {
 
     @Singleton
     @Provides
+    fun providePokemonEvolutionDao(database: PokemonDatabase) = database.getPokemonEvolutionDao()
+
+    @Singleton
+    @Provides
     fun provideTypeDao(database: PokemonDatabase) = database.getTypeDao()
 
     @Singleton

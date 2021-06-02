@@ -17,10 +17,11 @@ object DataRepositoryModule {
 
     @Provides
     fun provideLocalRepository(pokemonDao: PokemonDao,
+                               pokemonEvolutionDao: PokemonEvolutionDao,
                                typeDao: TypeDao,
                                pokemonTypeCrossRefDao: PokemonTypeCrossRefDao,
                                attackDao: AttackDao,
                                locationDao: LocationDao,
                                skillDao: SkillDao) =
-        PokedexLocalRepository(pokemonDao, typeDao, pokemonTypeCrossRefDao, attackDao, locationDao, skillDao)
+        PokedexLocalRepository(pokemonDao, pokemonEvolutionDao, typeDao, pokemonTypeCrossRefDao, attackDao, locationDao, skillDao)
 }

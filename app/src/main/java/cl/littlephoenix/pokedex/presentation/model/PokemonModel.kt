@@ -3,6 +3,7 @@ package cl.littlephoenix.pokedex.presentation.model
 import android.os.Parcel
 import android.os.Parcelable
 import cl.littlephoenix.pokedex.data.entities.PokemonEntity
+import cl.littlephoenix.pokedex.data.entities.PokemonEvolutionEntity
 
 data class PokemonModel (var id: Int,
                          var name: String,
@@ -58,4 +59,20 @@ fun PokemonEntity.toModel(): PokemonModel {
 
 fun PokemonModel.toEntity(): PokemonEntity {
     return PokemonEntity(id = id, name = name, photoUrl = urlPhoto, chainId = chainId)
+}
+
+fun PokemonModel.toEvolutionEntity(pokemonId: Int): PokemonEvolutionEntity {
+    return PokemonEvolutionEntity(id = 0, pokemonId = pokemonId, name = name, photoUrl = urlPhoto)
+}
+
+fun PokemonEvolutionEntity.toModel() : PokemonModel {
+    return PokemonModel(id = id,
+        name = name,
+        urlPhoto = photoUrl,
+        type = listOf(),
+        attacks = listOf(),
+        skills = listOf(),
+        chainId = -1,
+        evolutions = listOf(),
+        locations = listOf())
 }

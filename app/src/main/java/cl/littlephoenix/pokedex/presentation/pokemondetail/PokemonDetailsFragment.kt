@@ -13,7 +13,6 @@ import cl.littlephoenix.pokedex.databinding.PokemonDetailsFragmentBinding
 import cl.littlephoenix.pokedex.presentation.model.PokemonModel
 import cl.littlephoenix.pokedex.utils.Resource
 import coil.load
-import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -53,22 +52,6 @@ class PokemonDetailsFragment : Fragment() {
                 }
             }
         })
-        /*viewModel.getPokemonSpecies(pokemon.id, pokemon).observe(viewLifecycleOwner, {
-            when(it.status) {
-                Resource.Status.LOADING -> showProgress()
-                Resource.Status.ERROR -> {
-                    hideProgress()
-                    Log.e("Error", it.message ?: "error")
-                }
-                Resource.Status.SUCCESS -> {
-                    pokemon.evolutions = ArrayList(it.data)
-                    pokemon.evolutions.firstOrNull()?.let { firstPoke ->
-                        pokemon.chainId = firstPoke.chainId
-                    }
-                    setEvolutions()
-                }
-            }
-        })*/
         viewModel.getPokemonEncounters(pokemon.id).observe(viewLifecycleOwner, {
             when(it.status) {
                 Resource.Status.LOADING -> showProgress()
