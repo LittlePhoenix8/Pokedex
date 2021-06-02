@@ -9,7 +9,7 @@ import cl.littlephoenix.pokedex.utils.getPhotoUrl
 data class PokemonName(var name: String, var url: String)
 
 fun PokemonName.toEntity(): PokemonEntity {
-    return PokemonEntity(url.getIdFromUrl(), name.getNameUppercase(), url.getPhotoUrl())
+    return PokemonEntity(url.getIdFromUrl(), name.getNameUppercase(), url.getPhotoUrl(), -1)
 }
 
 fun PokemonName.toModel(): PokemonModel {

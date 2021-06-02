@@ -5,7 +5,7 @@ import cl.littlephoenix.pokedex.data.entities.PokemonEntity
 
 @Dao
 interface PokemonDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(pokemon: List<PokemonEntity>)
 
     @Update
@@ -14,6 +14,6 @@ interface PokemonDao {
     @Query("SELECT * FROM pokemon ORDER BY id_pokemon ASC")
     fun getAllPokemon(): List<PokemonEntity>
 
-    @Query("SELECT * FROM pokemon WHERE name_pokemon is (:name)")
-    fun getAllPokemonByName(name: String): List<PokemonEntity>
+    @Query("SELECT * FROM pokemon WHERE id_pokemon is (:id)")
+    fun getPokemonById(id: Int): PokemonEntity?
 }

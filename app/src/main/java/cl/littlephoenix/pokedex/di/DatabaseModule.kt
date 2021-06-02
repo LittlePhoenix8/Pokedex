@@ -19,4 +19,28 @@ object DatabaseModule {
     @Singleton
     @Provides
     fun providePokemonDao(database: PokemonDatabase) = database.getPokemonDao()
+
+    @Singleton
+    @Provides
+    fun providePokemonEvolutionDao(database: PokemonDatabase) = database.getPokemonEvolutionDao()
+
+    @Singleton
+    @Provides
+    fun provideTypeDao(database: PokemonDatabase) = database.getTypeDao()
+
+    @Singleton
+    @Provides
+    fun providePokemonTypeCrossRefDao(database: PokemonDatabase) = database.getPokemonTypeCrossRefDao()
+
+    @Singleton
+    @Provides
+    fun provideAttackDao(database: PokemonDatabase) = database.getAttackDao()
+
+    @Singleton
+    @Provides
+    fun provideLocationDao(database: PokemonDatabase) = database.getLocationDao()
+
+    @Singleton
+    @Provides
+    fun provideSkillDao(database: PokemonDatabase) = database.getSkillDao()
 }

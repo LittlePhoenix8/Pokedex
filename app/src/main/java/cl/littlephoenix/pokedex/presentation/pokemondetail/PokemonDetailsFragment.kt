@@ -13,7 +13,6 @@ import cl.littlephoenix.pokedex.databinding.PokemonDetailsFragmentBinding
 import cl.littlephoenix.pokedex.presentation.model.PokemonModel
 import cl.littlephoenix.pokedex.utils.Resource
 import coil.load
-import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -47,24 +46,9 @@ class PokemonDetailsFragment : Fragment() {
                     if (it.data != null) {
                         pokemon = it.data
                         setInfo()
+                        setEvolutions()
                     }
                     hideProgress()
-                }
-            }
-        })
-        viewModel.getPokemonSpecies(pokemon.id).observe(viewLifecycleOwner, {
-            when(it.status) {
-                Resource.Status.LOADING -> showProgress()
-                Resource.Status.ERROR -> {
-                    hideProgress()
-                    Log.e("Error", it.message ?: "error")
-                }
-                Resource.Status.SUCCESS -> {
-                    pokemon.evolutions = ArrayList(it.data)
-                    pokemon.evolutions.firstOrNull()?.let { firstPoke ->
-                        pokemon.chainId = firstPoke.chainId
-                    }
-                    setEvolutions()
                 }
             }
         })
@@ -117,7 +101,14 @@ class PokemonDetailsFragment : Fragment() {
     }
 
     private fun setLocations() {
-        binding.rvPokeLocations.layoutManager = LinearLayoutManager(requireContext())
-        binding.rvPokeLocations.adapter = PokemonAttacksAdapter(ArrayList(pokemon.locations))
+        if (pokemon.locations.isEmpty()) {
+            binding.tvPokeLocationsLabel.visibility = View.GONE
+            binding.rvPokeLocations.visibility = View.GONE
+        } else {
+            binding.tvPokeLocationsLabel.visibility = View.VISIBLE
+            binding.rvPokeLocations.visibility = View.VISIBLE
+            binding.rvPokeLocations.layoutManager = LinearLayoutManager(requireContext())
+            binding.rvPokeLocations.adapter = PokemonAttacksAdapter(ArrayList(pokemon.locations))
+        }
     }
 }

@@ -3,6 +3,7 @@ package cl.littlephoenix.pokedex.presentation.model
 import android.os.Parcel
 import android.os.Parcelable
 import cl.littlephoenix.pokedex.data.entities.PokemonEntity
+import cl.littlephoenix.pokedex.data.entities.PokemonEvolutionEntity
 
 data class PokemonModel (var id: Int,
                          var name: String,
@@ -12,7 +13,7 @@ data class PokemonModel (var id: Int,
                          var skills: List<String>,
                          var chainId: Int,
                          var evolutions: List<PokemonModel>,
-                         var locations: List<String>,): Parcelable {
+                         var locations: List<String>): Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
         parcel.readString()!!,
@@ -37,22 +38,41 @@ data class PokemonModel (var id: Int,
         parcel.writeStringList(locations)
     }
 
-    override fun describeContents(): Int {
-        return 0
-    }
+    override fun describeContents(): Int = 0
 
     companion object CREATOR : Parcelable.Creator<PokemonModel> {
-        override fun createFromParcel(parcel: Parcel): PokemonModel {
-            return PokemonModel(parcel)
-        }
-
-        override fun newArray(size: Int): Array<PokemonModel?> {
-            return arrayOfNulls(size)
-        }
+        override fun createFromParcel(parcel: Parcel): PokemonModel = PokemonModel(parcel)
+        override fun newArray(size: Int): Array<PokemonModel?> = arrayOfNulls(size)
     }
 }
-
-//TODO update
 fun PokemonEntity.toModel(): PokemonModel {
-    return PokemonModel(id, name, photoUrl, listOf(), listOf(), listOf(), -1, listOf(), listOf())
+    return PokemonModel(id = id,
+        name = name,
+        urlPhoto = photoUrl,
+        type = listOf(),
+        attacks = listOf(),
+        skills = listOf(),
+        chainId = chainId,
+        evolutions = listOf(),
+        locations = listOf())
+}
+
+fun PokemonModel.toEntity(): PokemonEntity {
+    return PokemonEntity(id = id, name = name, photoUrl = urlPhoto, chainId = chainId)
+}
+
+fun PokemonModel.toEvolutionEntity(pokemonId: Int): PokemonEvolutionEntity {
+    return PokemonEvolutionEntity(id = 0, pokemonId = pokemonId, name = name, photoUrl = urlPhoto)
+}
+
+fun PokemonEvolutionEntity.toModel() : PokemonModel {
+    return PokemonModel(id = id,
+        name = name,
+        urlPhoto = photoUrl,
+        type = listOf(),
+        attacks = listOf(),
+        skills = listOf(),
+        chainId = -1,
+        evolutions = listOf(),
+        locations = listOf())
 }

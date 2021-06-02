@@ -1,5 +1,7 @@
 package cl.littlephoenix.pokedex.data.model
 
+import cl.littlephoenix.pokedex.data.entities.AttackEntity
+import cl.littlephoenix.pokedex.data.entities.SkillEntity
 import cl.littlephoenix.pokedex.presentation.model.PokemonModel
 import cl.littlephoenix.pokedex.utils.getIdFromUrl
 import cl.littlephoenix.pokedex.utils.getNameUppercase
@@ -15,7 +17,7 @@ data class PokemonInfoResponse(var id: Int,
 
 data class PokemonTypes(var slot: Int, var type: Type)
 
-data class Type(var name: String)
+data class Type(var name: String, var url: String)
 
 data class Abilities(var ability: Ability)
 
@@ -27,14 +29,14 @@ data class Move(var name: String)
 
 data class Species(var name: String, var url: String)
 
-fun PokemonInfoResponse.toModel(): PokemonModel {
+fun PokemonInfoResponse.toModel(chainId: Int): PokemonModel {
     return PokemonModel(id = id,
         name = name.getNameUppercase(),
         urlPhoto = id.getPhotoUrl(),
         type = types.map { it.type.name.getNameUppercase() },
-        attacks = moves.map { it.move.name.getNameUppercase().replace("-", " ") },
-        skills = abilities.map { it.ability.name.getNameUppercase().replace("-", " ") },
-        chainId = -1,
+        attacks = moves.map { it.move.name.getNameUppercase() },
+        skills = abilities.map { it.ability.name.getNameUppercase() },
+        chainId = chainId,
         evolutions = listOf(),
         locations = listOf())
 }
@@ -49,4 +51,12 @@ fun Species.toModel(chainId: Int): PokemonModel {
         chainId = chainId,
         evolutions = listOf(),
         locations = listOf())
+}
+
+fun Move.toEntity(id: Int): AttackEntity {
+    return AttackEntity(id = 0, pokemonId = id, attack = name.getNameUppercase())
+}
+
+fun Ability.toEntity(id: Int): SkillEntity {
+    return SkillEntity(id = 0, pokemonId = id, skill = name.getNameUppercase())
 }
