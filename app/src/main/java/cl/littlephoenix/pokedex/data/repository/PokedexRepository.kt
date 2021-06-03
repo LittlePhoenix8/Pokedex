@@ -5,8 +5,8 @@ import cl.littlephoenix.pokedex.data.model.PokemonResponse
 import javax.inject.Inject
 
 class PokedexRepository @Inject constructor(private val pokedexApiService: PokedexApiService) {
-    suspend fun getTypes() = pokedexApiService.getTypes()
     suspend fun getFirstGenPokemon() = pokedexApiService.getFirstGenPokemon()
+    suspend fun getTypes() = pokedexApiService.getTypes()
     suspend fun getPokemonDetail(pokemonId: Int) = pokedexApiService.getPokemonDetail(pokemonId)
     suspend fun getPokemonSpecie(pokemonId: Int) = pokedexApiService.getPokemonSpecie(pokemonId)
     suspend fun getPokemonEvolutions(pokemonId: Int) = pokedexApiService.getPokemonEvolutions(pokemonId)

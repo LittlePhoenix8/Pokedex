@@ -25,18 +25,18 @@ class PokemonListViewModel @Inject constructor(
         }
         try {
             val remote = pokedexRepository.getFirstGenPokemon()
-            if (remote == null) {
-                Log.e("NetworkError", "network error")
-                emit(Resource.error("Ups, there was an error, please try again", null))
-            } else {
-                if (remote.results.isEmpty()) {
-                    emit(Resource.error("There are no pokemon to show right now, please try again", null))
-                } else {
-                    val pokemonDbList = remote.results.map { it.toEntity() }
-                    val pokemonModelList = remote.results.map { it.toModel() }
+            if (remote.isSuccessful) {
+                if (remote.body() != null) {
+                    val pokemonDbList = remote.body()!!.results.map { it.toEntity() }
+                    val pokemonModelList = remote.body()!!.results.map { it.toModel() }
                     localRepository.saveAllPokemon(pokemonDbList)
                     emit(Resource.success(pokemonModelList))
+                } else {
+                    emit(Resource.error("There are no pokemon to show right now, please try again", null))
                 }
+            } else {
+                Log.e("NetworkError", "network error")
+                emit(Resource.error("Ups, there was an error, please try again", null))
             }
         } catch (e: Exception) {
             Log.e("Ex", e.message, e)
@@ -46,12 +46,15 @@ class PokemonListViewModel @Inject constructor(
     fun getTypes() = liveData(Dispatchers.IO) {
         try {
             val remote = pokedexRepository.getTypes()
-            if (remote == null) {
+            if (remote.isSuccessful) {
+                if (remote.body() != null) {
+                    val body = remote.body()!!
+                    localRepository.saveTypes(body.toEntity())
+                    emit(Resource.success(body))
+                }
+            } else {
                 Log.e("NetworkError", "network error")
                 emit(Resource.error("Ups, there was an error, please try again", null))
-            } else {
-                localRepository.saveTypes(remote.toEntity())
-                emit(Resource.success(remote))
             }
         } catch (e: Exception) {
             Log.e("Ex", e.message, e)
