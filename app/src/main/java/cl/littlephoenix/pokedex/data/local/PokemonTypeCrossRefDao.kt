@@ -12,5 +12,5 @@ interface PokemonTypeCrossRefDao {
     suspend fun insertPokeType(pokemonType: List<PokemonTypeCrossRef>)
 
     @Query("SELECT * FROM poketype WHERE pokemon_id is (:id)")
-    fun getTypeByPokemonId(id: Int): List<PokemonTypeCrossRef>
+    suspend fun getTypeByPokemonId(id: Int): List<PokemonTypeCrossRef>
 }

@@ -12,11 +12,11 @@ interface TypeDao {
     suspend fun insert(pokemon: List<TypeEntity>)
 
     @Query("SELECT * FROM type ORDER BY id_type ASC")
-    fun getAllTypes(): List<TypeEntity>
+    suspend fun getAllTypes(): List<TypeEntity>
 
     @Query("SELECT * FROM type WHERE type_name is (:name)")
-    fun getTypeByName(name: String): List<TypeEntity>
+    suspend fun getTypeByName(name: String): List<TypeEntity>
 
     @Query("SELECT * FROM type WHERE id_type in (:ids)")
-    fun getTypeById(ids: List<Int>): List<TypeEntity>
+    suspend fun getTypeById(ids: List<Int>): List<TypeEntity>
 }

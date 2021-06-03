@@ -43,6 +43,7 @@ class PokemonListViewModel @Inject constructor(
             emit(Resource.error("Ups, there was an error, please try again", null))
         }
     }
+
     fun getTypes() = liveData(Dispatchers.IO) {
         try {
             val remote = pokedexRepository.getTypes()

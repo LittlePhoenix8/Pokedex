@@ -11,5 +11,5 @@ interface PokemonEvolutionDao {
     suspend fun insertPokeEvols(pokemon: List<PokemonEvolutionEntity>)
 
     @Query("SELECT * FROM pokeevols WHERE pokemon_id is (:id)")
-    fun getPokemonEvolutionsById(id: Int): List<PokemonEvolutionEntity>
+    suspend fun getPokemonEvolutionsById(id: Int): List<PokemonEvolutionEntity>
 }
