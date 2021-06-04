@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'dagger.hilt.android.plugin'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
+apply plugin: 'jacoco'
 
 android {
     compileSdkVersion 30
@@ -19,6 +20,9 @@ android {
     }
 
     buildTypes {
+        debug {
+            testCoverageEnabled true
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -36,6 +40,17 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+    }
+    testOptions {
+        unitTests {
+            all {
+                jvmArgs '-noverify', '-ea'
+                jacoco {
+                    includeNoLocationClasses = true
+                }
+            }
+            includeAndroidResources = true
+        }
     }
 }
 
@@ -97,4 +112,55 @@ dependencies {
     androidTestImplementation ("androidx.test.espresso:espresso-core:3.3.0", {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+}
+
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
+
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+
+    def fileFilter = [
+            '**/R.class',
+            '**/R$*.class',
+            '**/BuildConfig.*',
+            '**/Manifest*.*',
+            '**/*Test*.*',
+            'android/**/*.*',
+            '**/*_MembersInjector.class',
+            '**/Dagger*Component.class', // covers component implementations
+            '**/Dagger*Component$Builder.class', // covers component builders
+            '**/*Module_*Factory.class',
+            '**/data/entities/*.*',
+            '**/data/entities/**',
+            '**/data/model/*.*',
+            '**/data/model/**',
+    ]
+    //def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
+    def debugTree = fileTree(dir: "${buildDir}/intermediates/javac/debug/classes/br", excludes:fileFilter)
+    def mainSrc = "${project.projectDir}/src/main/java"
+
+    sourceDirectories.setFrom(files([mainSrc]))
+    classDirectories.setFrom(files([debugTree]))
+    /*executionData.setFrom(fileTree(dir: "$buildDir", includes: [
+            "jacoco/testDebugUnitTest.exec",
+            "outputs/code-coverage/connected/*coverage.ec"
+    ]))*/
+    executionData.setFrom(fileTree(dir: project.projectDir, includes: ['**/**/*.exec', '**/**/*.ec']))
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    exclude: [
+                            '**/data/model/**',
+                            '**/data/model/*.*',
+                            '**/data/entities/**',
+                            '**/data/entities/*.*',
+                    ])
+        }))
+    }
+}
+tasks.withType(Test) {
+    jacoco.includeNoLocationClasses = true
 }
