@@ -53,4 +53,15 @@ class PokemonDaoTest {
         assertTrue(pokemonDb != null)
         assertTrue(pokemonDb!!.id == id)
     }
+
+    @Test
+    @Throws(Exception::class)
+    fun insertAndUpdate() = runBlocking {
+        val pokemonListWithoutChainId = TestUtil.getPokemonWithoutChainId()
+        pokemonDao.insert(pokemonListWithoutChainId)
+        val pokemonList = TestUtil.getPokemon()
+        pokemonDao.update(pokemonList)
+        val pokemonUpdated = pokemonDao.getAllPokemon()
+        assertTrue(pokemonUpdated.first().chainId != -1)
+    }
 }

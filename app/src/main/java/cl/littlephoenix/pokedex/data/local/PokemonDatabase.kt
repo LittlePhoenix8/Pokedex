@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import cl.littlephoenix.pokedex.data.entities.*
 
 @Database(entities = [PokemonEntity::class, TypeEntity::class, AttackEntity::class,
-    LocationEntity::class, SkillEntity::class, PokemonTypeCrossRef::class,
+    LocationEntity::class, SkillEntity::class, PokemonTypeCrossRefEntity::class,
     PokemonEvolutionEntity::class], version = 5, exportSchema = false)
 abstract class PokemonDatabase: RoomDatabase() {
     abstract fun getPokemonDao(): PokemonDao

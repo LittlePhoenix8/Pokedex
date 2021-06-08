@@ -77,7 +77,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.12.0'
     implementation 'com.squareup.okhttp3:okhttp:4.9.1'
-    //testImplementation "com.squareup.okhttp3:mockwebserver:4.9.1"
+    testImplementation "com.squareup.okhttp3:mockwebserver:4.9.1"
 
     // Room components
     implementation "androidx.room:room-ktx:2.3.0"
@@ -124,10 +124,16 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'crea
     def fileFilter = [
             '**/R.class',
             '**/R$*.class',
-            '**/BuildConfig.*',
             '**/Manifest*.*',
-            '**/*Test*.*',
             'android/**/*.*',
+            '**/BuildConfig.*',
+            '**/*$ViewBinder*.*',
+            '**/*$ViewInjector*.*',
+            '**/Lambda$*.class',
+            '**/Lambda.class',
+            '**/*Lambda.class',
+            '**/*Lambda*.class',
+            //'**/*Test*.*',
             '**/*_MembersInjector.class',
             '**/Dagger*Component.class', // covers component implementations
             '**/Dagger*Component$Builder.class', // covers component builders
@@ -136,13 +142,14 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'crea
             '**/data/entities/**',
             '**/data/model/*.*',
             '**/data/model/**',
+            '**/*Entity*.*',
     ]
-    //def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
-    def debugTree = fileTree(dir: "${buildDir}/intermediates/javac/debug/classes/br", excludes:fileFilter)
+    def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
+    def debugKTree = fileTree(dir: "${project.buildDir}/tmp/kotlin-classes/debug", excludes: fileFilter)
     def mainSrc = "${project.projectDir}/src/main/java"
 
     sourceDirectories.setFrom(files([mainSrc]))
-    classDirectories.setFrom(files([debugTree]))
+    classDirectories.setFrom(files([debugTree, debugKTree]))
     /*executionData.setFrom(fileTree(dir: "$buildDir", includes: [
             "jacoco/testDebugUnitTest.exec",
             "outputs/code-coverage/connected/*coverage.ec"
@@ -152,12 +159,7 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'crea
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it,
-                    exclude: [
-                            '**/data/model/**',
-                            '**/data/model/*.*',
-                            '**/data/entities/**',
-                            '**/data/entities/*.*',
-                    ])
+                    exclude: fileFilter)
         }))
     }
 }
