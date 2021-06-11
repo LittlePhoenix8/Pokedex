@@ -12,6 +12,5 @@ interface LocationDao {
     suspend fun insert(locations: List<LocationEntity>)
 
     @Query("SELECT * FROM location WHERE pokemon_id is (:id)")
-    fun getLocationsByPokemon(id: Int): List<LocationEntity>?
-
+    suspend fun getLocationsByPokemon(id: Int): List<LocationEntity>
 }

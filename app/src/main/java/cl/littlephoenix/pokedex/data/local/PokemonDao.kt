@@ -12,8 +12,8 @@ interface PokemonDao {
     suspend fun update(pokemon: List<PokemonEntity>)
 
     @Query("SELECT * FROM pokemon ORDER BY id_pokemon ASC")
-    fun getAllPokemon(): List<PokemonEntity>
+    suspend fun getAllPokemon(): List<PokemonEntity>
 
     @Query("SELECT * FROM pokemon WHERE id_pokemon is (:id)")
-    fun getPokemonById(id: Int): PokemonEntity?
+    suspend fun getPokemonById(id: Int): PokemonEntity?
 }

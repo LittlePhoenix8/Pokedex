@@ -3,6 +3,17 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'dagger.hilt.android.plugin'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
+apply plugin: 'jacoco'
+
+//jacoco {
+//    toolVersion = "$jacocoVersion"
+//}
+tasks.withType(Test) {
+    jacoco {
+        includeNoLocationClasses = true
+//        excludes = ['jdk.internal.*'] // Allows it to run on Java 11
+    }
+}
 
 android {
     compileSdkVersion 30
@@ -17,8 +28,15 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
+//    sourceSets {
+//        main.java.srcDirs += 'src/main/kotlin'
+//        test.java.srcDirs += 'src/test/kotlin'
+//        androidTest.java.srcDirs += 'src/androidTest/kotlin'
+//    }
     buildTypes {
+        debug {
+            testCoverageEnabled true
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -33,22 +51,44 @@ android {
     }
     packagingOptions {
         exclude 'META-INF/atomicfu.kotlin_module'
+        exclude "META-INF/AL2.0"
+        exclude 'META-INF/LGPL2.1'
+        exclude 'win32-x86/attach_hotspot_windows.dll'
+        exclude 'META-INF/licenses/ASM'
+        exclude 'win32-x86-64/attach_hotspot_windows.dll'
     }
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    testOptions {
+//        execution 'ANDROID_TEST_ORCHESTRATOR'
+//        animationsDisabled true
+//
+//        unitTests {
+//            includeAndroidResources = true
+//        }
+        unitTests {
+            all {
+                jvmArgs '-noverify', '-ea'
+                jacoco {
+                    includeNoLocationClasses = true
+                }
+            }
+            includeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
-
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.5.0'
     implementation 'androidx.appcompat:appcompat:1.3.0'
     implementation "androidx.activity:activity-ktx:1.2.3"
     implementation "androidx.fragment:fragment-ktx:1.3.4"
     implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    implementation 'androidx.recyclerview:recyclerview:1.2.0'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     // Hilt
@@ -61,8 +101,10 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.0'
-    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
+    androidTestImplementation "com.squareup.okhttp3:mockwebserver:4.9.1"
+    //testImplementation 'com.squareup.retrofit2:retrofit-mock:2.3.0'
 
     // Room components
     implementation "androidx.room:room-ktx:2.3.0"
@@ -77,8 +119,8 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.3.1"
 
     // Kotlin components
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3"
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0"
 
     // Images
     implementation "io.coil-kt:coil:1.2.1"
@@ -87,13 +129,73 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:2.3.5"
     implementation "androidx.navigation:navigation-ui-ktx:2.3.5"
 
-
-    //
     // Testing
+    androidTestImplementation 'androidx.test:core:1.3.0'
+    androidTestImplementation 'androidx.test:runner:1.3.0'
+    androidTestImplementation 'androidx.test:rules:1.3.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
     androidTestImplementation ("androidx.test.espresso:espresso-core:3.3.0", {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    androidTestImplementation "androidx.test.ext:junituni:1.1.2"
+    //
+    androidTestImplementation 'org.mockito:mockito-core:3.9.0'
+    testImplementation "org.mockito.kotlin:mockito-kotlin:3.2.0"
+    //testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.0'
+    androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.0'
+}
+
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
+
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+
+    def fileFilter = [
+            '**/R.class',
+            '**/R$*.class',
+            '**/Manifest*.*',
+            'android/**/*.*',
+            '**/BuildConfig.*',
+            '**/*$ViewBinder*.*',
+            '**/*$ViewInjector*.*',
+            '**/Lambda$*.class',
+            '**/Lambda.class',
+            '**/*Lambda.class',
+            '**/*Lambda*.class',
+            //'**/*Test*.*',
+            '**/*_MembersInjector.class',
+            '**/Dagger*Component.class', // covers component implementations
+            '**/Dagger*Component$Builder.class', // covers component builders
+            '**/*Module_*Factory.class',
+            '**/data/entities/*.*',
+            '**/data/entities/**',
+            '**/data/model/*.*',
+            '**/data/model/**',
+            '**/*Entity*.*',
+    ]
+    def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
+    def debugKTree = fileTree(dir: "${project.buildDir}/tmp/kotlin-classes/debug", excludes: fileFilter)
+//    def debugTree = fileTree(dir: "$buildDir/intermediates/classes/debug", excludes: fileFilter)
+//    def debugKTree = fileTree(dir: "$project.buildDir/tmp/kotlin-classes/debug", excludes: fileFilter)
+    def mainSrc = "${project.projectDir}/src/main/java"
+//    def mainSrcK = "${project.projectDir}/src/main/kotlin"
+
+    sourceDirectories.setFrom(files([mainSrc]))
+    classDirectories.setFrom(files([debugTree, debugKTree]))
+//    executionData.setFrom(fileTree(dir: "$buildDir", includes: ['jacoco/testDebugUnitTest.exec',
+//                                                                'outputs/code_coverage/debugAndroidTest/connected/**/*.ec']))
+    executionData.setFrom(fileTree(dir: project.projectDir, includes: ['**/**/*.exec', '**/**/*.ec']))
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    exclude: fileFilter)
+        }))
+    }
+}
+tasks.withType(Test) {
+    jacoco.includeNoLocationClasses = true
 }

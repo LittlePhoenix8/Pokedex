@@ -4,13 +4,13 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import cl.littlephoenix.pokedex.data.entities.PokemonTypeCrossRef
+import cl.littlephoenix.pokedex.data.entities.PokemonTypeCrossRefEntity
 
 @Dao
 interface PokemonTypeCrossRefDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertPokeType(pokemonType: List<PokemonTypeCrossRef>)
+    suspend fun insertPokeType(pokemonType: List<PokemonTypeCrossRefEntity>)
 
     @Query("SELECT * FROM poketype WHERE pokemon_id is (:id)")
-    fun getTypeByPokemonId(id: Int): List<PokemonTypeCrossRef>
+    suspend fun getTypeByPokemonId(id: Int): List<PokemonTypeCrossRefEntity>
 }

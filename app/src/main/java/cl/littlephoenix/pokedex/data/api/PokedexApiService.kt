@@ -1,6 +1,7 @@
 package cl.littlephoenix.pokedex.data.api
 
 import cl.littlephoenix.pokedex.data.model.*
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 
@@ -11,20 +12,20 @@ interface PokedexApiService {
     }
 
     @GET("type")
-    suspend fun getTypes(): TypeResponse?
+    suspend fun getTypes(): Response<TypeResponse>
 
     @GET("pokemon?limit=151")
-    suspend fun getFirstGenPokemon(): PokemonResponse?
+    suspend fun getFirstGenPokemon(): Response<PokemonResponse>
 
     @GET("pokemon/{pokemonId}")
-    suspend fun getPokemonDetail(@Path("pokemonId") pokemonId: Int): PokemonInfoResponse?
+    suspend fun getPokemonDetail(@Path("pokemonId") pokemonId: Int): Response<PokemonInfoResponse>
 
     @GET("pokemon/{pokemonId}/encounters")
-    suspend fun getPokemonLocation(@Path("pokemonId") pokemonId: Int): Array<PokemonLocationsResponse>?
+    suspend fun getPokemonLocation(@Path("pokemonId") pokemonId: Int): Response<Array<PokemonLocationsResponse>>
 
     @GET("pokemon-species/{pokemonId}/")
-    suspend fun getPokemonSpecie(@Path("pokemonId") pokemonId: Int): PokemonSpecieResponse?
+    suspend fun getPokemonSpecie(@Path("pokemonId") pokemonId: Int): Response<PokemonSpecieResponse>
 
     @GET("evolution-chain/{pokemonId}/")
-    suspend fun getPokemonEvolutions(@Path("pokemonId") pokemonId: Int): PokemonEvolutionResponse?
+    suspend fun getPokemonEvolutions(@Path("pokemonId") pokemonId: Int): Response<PokemonEvolutionResponse>
 }

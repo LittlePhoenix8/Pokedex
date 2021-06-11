@@ -25,7 +25,7 @@ class PokedexLocalRepository @Inject constructor(
     //type
     suspend fun saveTypes(typeList: List<TypeEntity>) = typeDao.insert(typeList)
     suspend fun getTypesById(ids: List<Int>) = typeDao.getTypeById(ids)
-    suspend fun savePokeTypes(typeList: List<PokemonTypeCrossRef>) = pokemonTypeCrossRefDao.insertPokeType(typeList)
+    suspend fun savePokeTypes(typeList: List<PokemonTypeCrossRefEntity>) = pokemonTypeCrossRefDao.insertPokeType(typeList)
     suspend fun getPokeTypesByPokemon(id: Int) = pokemonTypeCrossRefDao.getTypeByPokemonId(id)
 
     //attack
