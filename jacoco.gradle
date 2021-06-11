@@ -1,0 +1,56 @@
+apply plugin: 'jacoco'
+
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
+
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+
+    def fileFilter = [
+            '**/R.class',
+            '**/R$*.class',
+            '**/Manifest*.*',
+            'android/**/*.*',
+            '**/BuildConfig.*',
+            '**/*$ViewBinder*.*',
+            '**/*$ViewInjector*.*',
+            '**/Lambda$*.class',
+            '**/Lambda.class',
+            '**/*Lambda.class',
+            '**/*Lambda*.class',
+            //'**/*Test*.*',
+            '**/*_MembersInjector.class',
+            '**/Dagger*Component.class', // covers component implementations
+            '**/Dagger*Component$Builder.class', // covers component builders
+            '**/*Module_*Factory.class',
+            '**/data/entities/*.*',
+            '**/data/entities/**',
+            '**/data/model/*.*',
+            '**/data/model/**',
+            '**/*Entity*.*',
+    ]
+    def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
+    def debugKTree = fileTree(dir: "${project.buildDir}/tmp/kotlin-classes/debug", excludes: fileFilter)
+    def mainSrc = "${project.projectDir}/src/main/java"
+    def mainSrcK = "${project.projectDir}/src/main/kotlin"
+
+    sourceDirectories.setFrom(files([mainSrc, mainSrcK]))
+    classDirectories.setFrom(files([debugTree, debugKTree]))
+    /*executionData.setFrom(fileTree(dir: "$buildDir", includes: [
+            "jacoco/testDebugUnitTest.exec",
+            "outputs/code-coverage/connected/*coverage.ec"
+    ]))*/
+    executionData.setFrom(fileTree(dir: project.projectDir, includes: ['**/**/*.exec', '**/**/*.ec']))
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    exclude: fileFilter)
+        }))
+    }
+}
+
+tasks.withType(Test) {
+    jacoco.includeNoLocationClasses = true
+}

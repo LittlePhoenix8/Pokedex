@@ -5,6 +5,16 @@ apply plugin: 'dagger.hilt.android.plugin'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'jacoco'
 
+//jacoco {
+//    toolVersion = "$jacocoVersion"
+//}
+tasks.withType(Test) {
+    jacoco {
+        includeNoLocationClasses = true
+//        excludes = ['jdk.internal.*'] // Allows it to run on Java 11
+    }
+}
+
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
@@ -18,7 +28,11 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
+//    sourceSets {
+//        main.java.srcDirs += 'src/main/kotlin'
+//        test.java.srcDirs += 'src/test/kotlin'
+//        androidTest.java.srcDirs += 'src/androidTest/kotlin'
+//    }
     buildTypes {
         debug {
             testCoverageEnabled true
@@ -47,6 +61,12 @@ android {
         jvmTarget = '1.8'
     }
     testOptions {
+//        execution 'ANDROID_TEST_ORCHESTRATOR'
+//        animationsDisabled true
+//
+//        unitTests {
+//            includeAndroidResources = true
+//        }
         unitTests {
             all {
                 jvmArgs '-noverify', '-ea'
@@ -81,7 +101,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
     implementation 'com.squareup.okhttp3:okhttp:4.9.1'
     androidTestImplementation "com.squareup.okhttp3:mockwebserver:4.9.1"
     //testImplementation 'com.squareup.retrofit2:retrofit-mock:2.3.0'
@@ -100,7 +120,7 @@ dependencies {
 
     // Kotlin components
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0"
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0"
 
     // Images
     implementation "io.coil-kt:coil:1.2.1"
@@ -158,14 +178,15 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'crea
     ]
     def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
     def debugKTree = fileTree(dir: "${project.buildDir}/tmp/kotlin-classes/debug", excludes: fileFilter)
+//    def debugTree = fileTree(dir: "$buildDir/intermediates/classes/debug", excludes: fileFilter)
+//    def debugKTree = fileTree(dir: "$project.buildDir/tmp/kotlin-classes/debug", excludes: fileFilter)
     def mainSrc = "${project.projectDir}/src/main/java"
+//    def mainSrcK = "${project.projectDir}/src/main/kotlin"
 
     sourceDirectories.setFrom(files([mainSrc]))
     classDirectories.setFrom(files([debugTree, debugKTree]))
-    /*executionData.setFrom(fileTree(dir: "$buildDir", includes: [
-            "jacoco/testDebugUnitTest.exec",
-            "outputs/code-coverage/connected/*coverage.ec"
-    ]))*/
+//    executionData.setFrom(fileTree(dir: "$buildDir", includes: ['jacoco/testDebugUnitTest.exec',
+//                                                                'outputs/code_coverage/debugAndroidTest/connected/**/*.ec']))
     executionData.setFrom(fileTree(dir: project.projectDir, includes: ['**/**/*.exec', '**/**/*.ec']))
 
     afterEvaluate {
