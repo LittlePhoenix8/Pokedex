@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import cl.littlephoenix.pokedex.databinding.PokemonListFragmentBinding
 import cl.littlephoenix.pokedex.presentation.model.PokemonModel
+import cl.littlephoenix.pokedex.presentation.model.toEntity
 import cl.littlephoenix.pokedex.utils.Resource
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
@@ -56,6 +57,13 @@ class PokemonListFragment : Fragment() {
             findNavController()
                 .navigate(PokemonListFragmentDirections.goToPokemonDetails(pokemon = pokemon))
         }
+        adapter.onEndOfListReached = {
+            if (pokemonList.size == 151) {
+                Log.d("Pokemon", "end of first 151 pokemon")
+                showProgress()
+                viewModel.getSecondGenerationPokemon()
+            }
+        }
         viewModel.getTypes().observe(viewLifecycleOwner, {
             if (it.status == Resource.Status.SUCCESS) {
                 Log.d("PokeTypes", "Saved types on db")
@@ -77,6 +85,17 @@ class PokemonListFragment : Fragment() {
                     hideProgress()
                 }
             }
+        })
+        viewModel.getPokemonSecondGenerationError().observe(viewLifecycleOwner, {
+            Log.e("SecondGenError", "error: $it")
+            hideProgress()
+        })
+        viewModel.getPokemonSecondGenerationList().observe(viewLifecycleOwner, {
+            Log.d("PokeList", Gson().toJson(it))
+            viewModel.saveSecondGeneration(it.map { poke -> poke.toEntity() })
+            pokemonList.addAll(it)
+            (binding.rvPokemon.adapter as PokemonListAdapter).notifyDataSetChanged()
+            hideProgress()
         })
     }
 

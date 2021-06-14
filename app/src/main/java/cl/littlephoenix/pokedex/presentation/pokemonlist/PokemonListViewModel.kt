@@ -2,20 +2,29 @@ package cl.littlephoenix.pokedex.presentation.pokemonlist
 
 import android.util.Log
 import androidx.lifecycle.*
+import cl.littlephoenix.pokedex.data.entities.PokemonEntity
 import cl.littlephoenix.pokedex.data.model.toEntity
 import cl.littlephoenix.pokedex.data.model.toModel
-import cl.littlephoenix.pokedex.data.repository.PokedexLocalRepository
 import cl.littlephoenix.pokedex.data.repository.PokedexRepository
+import cl.littlephoenix.pokedex.data.repository.PokedexRepositoryRx
+import cl.littlephoenix.pokedex.data.repository.PokedexRoomRepository
+import cl.littlephoenix.pokedex.presentation.model.PokemonModel
 import cl.littlephoenix.pokedex.presentation.model.toModel
 import cl.littlephoenix.pokedex.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.CompletableObserver
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
 @HiltViewModel
 class PokemonListViewModel @Inject constructor(
     private val pokedexRepository: PokedexRepository,
-    private val localRepository: PokedexLocalRepository) : ViewModel() {
+    private val pokedexRepositoryRx: PokedexRepositoryRx,
+    private val localRepository: PokedexRoomRepository) : ViewModel() {
     fun getFirstGenPokemon() = liveData(Dispatchers.IO) {
         emit(Resource.loading(null))
         val local = localRepository.getAllPokemon()
@@ -60,6 +69,47 @@ class PokemonListViewModel @Inject constructor(
         } catch (e: Exception) {
             Log.e("Ex", e.message, e)
             emit(Resource.error("Ups, there was an error, please try again", null))
+        }
+    }
+
+    private val pokemonSecondGenerationList = MutableLiveData<List<PokemonModel>>()
+    private val pokemonSecondGenerationError = MutableLiveData<String>()
+
+    fun getPokemonSecondGenerationList(): MutableLiveData<List<PokemonModel>> = pokemonSecondGenerationList
+    fun getPokemonSecondGenerationError(): MutableLiveData<String> = pokemonSecondGenerationError
+
+    fun getSecondGenerationPokemon() {
+        pokedexRepositoryRx.getSecondGenPokemon()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .map {
+                it.results.map { poke -> poke.toModel() }
+            }
+            .subscribe(
+                { pokemonEntityList -> pokemonSecondGenerationList.value = pokemonEntityList },
+                { error -> pokemonSecondGenerationError.value = error.message }
+            ).let {
+                Log.d("CompositeDisposable", "dispose get")
+                CompositeDisposable().dispose()
+            }
+    }
+
+    fun saveSecondGeneration(pokemon: List<PokemonEntity>) {
+        localRepository.saveSecondGen(pokemon)
+            .subscribeOn(Schedulers.io())
+            .subscribe(object : CompletableObserver {
+                override fun onSubscribe(d: Disposable?) {
+                    Log.d("onSubscribe", "isDisposed ${d?.isDisposed}")
+                }
+                override fun onComplete() {
+                    Log.d("onComplete", "ok")
+                }
+                override fun onError(e: Throwable?) {
+                    Log.e("onError", "error ${e?.message}")
+                }
+            }).let {
+                Log.d("CompositeDisposable", "dispose save")
+                CompositeDisposable().dispose()
         }
     }
 }
