@@ -88,7 +88,10 @@ class PokemonListViewModel @Inject constructor(
             .subscribe(
                 { pokemonEntityList -> pokemonSecondGenerationList.value = pokemonEntityList },
                 { error -> pokemonSecondGenerationError.value = error.message }
-            )
+            ).let {
+                Log.d("CompositeDisposable", "dispose get")
+                CompositeDisposable().dispose()
+            }
     }
 
     fun saveSecondGeneration(pokemon: List<PokemonEntity>) {
@@ -105,7 +108,8 @@ class PokemonListViewModel @Inject constructor(
                     Log.e("onError", "error ${e?.message}")
                 }
             }).let {
-            CompositeDisposable().dispose()
+                Log.d("CompositeDisposable", "dispose save")
+                CompositeDisposable().dispose()
         }
     }
 }

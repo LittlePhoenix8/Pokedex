@@ -87,7 +87,7 @@ class PokemonListFragment : Fragment() {
             }
         })
         viewModel.getPokemonSecondGenerationError().observe(viewLifecycleOwner, {
-            Log.e("SeconGenError", "error: $it")
+            Log.e("SecondGenError", "error: $it")
             hideProgress()
         })
         viewModel.getPokemonSecondGenerationList().observe(viewLifecycleOwner, {
