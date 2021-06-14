@@ -1,44 +1,35 @@
 package cl.littlephoenix.pokedex.data.repository
 
 import cl.littlephoenix.pokedex.data.entities.*
-import cl.littlephoenix.pokedex.data.local.*
-import javax.inject.Inject
+import io.reactivex.rxjava3.core.Completable
 
-class PokedexLocalRepository @Inject constructor(
-    private val pokemonDao: PokemonDao,
-    private val pokemonEvolutionDao: PokemonEvolutionDao,
-    private val typeDao: TypeDao,
-    private val pokemonTypeCrossRefDao: PokemonTypeCrossRefDao,
-    private val attackDao: AttackDao,
-    private val locationDao: LocationDao,
-    private val skillDao: SkillDao) {
-    //pokemon
-    suspend fun getAllPokemon() = pokemonDao.getAllPokemon()
-    suspend fun getPokemon(id: Int) = pokemonDao.getPokemonById(id)
-    suspend fun saveAllPokemon(pokemonList: List<PokemonEntity>) = pokemonDao.insert(pokemonList)
-    suspend fun updateAllPokemon(pokemonList: List<PokemonEntity>) = pokemonDao.update(pokemonList)
+interface PokedexLocalRepository {
+    suspend fun getAllPokemon(): List<PokemonEntity>
+    suspend fun getPokemon(id: Int): PokemonEntity?
+    suspend fun saveAllPokemon(pokemon: List<PokemonEntity>)
+    suspend fun updateAllPokemon(pokemon: List<PokemonEntity>)
 
-    fun saveSecondGen(pokemonList: List<PokemonEntity>) = pokemonDao.insertSecondGen(pokemonList)
+    fun saveSecondGen(pokemon: List<PokemonEntity>): Completable
 
     //pokemon evolutions
-    suspend fun getPokemonEvolutions(id: Int) = pokemonEvolutionDao.getPokemonEvolutionsById(id)
-    suspend fun savePokemonEvolutions(evolutions: List<PokemonEvolutionEntity>) = pokemonEvolutionDao.insertPokeEvols(evolutions)
+    suspend fun getPokemonEvolutions(id: Int): List<PokemonEvolutionEntity>
+    suspend fun savePokemonEvolutions(evolutions: List<PokemonEvolutionEntity>)
 
     //type
-    suspend fun saveTypes(typeList: List<TypeEntity>) = typeDao.insert(typeList)
-    suspend fun getTypesById(ids: List<Int>) = typeDao.getTypeById(ids)
-    suspend fun savePokeTypes(typeList: List<PokemonTypeCrossRefEntity>) = pokemonTypeCrossRefDao.insertPokeType(typeList)
-    suspend fun getPokeTypesByPokemon(id: Int) = pokemonTypeCrossRefDao.getTypeByPokemonId(id)
+    suspend fun saveTypes(typeList: List<TypeEntity>)
+    suspend fun getTypesById(ids: List<Int>): List<TypeEntity>
+    suspend fun savePokeTypes(typeList: List<PokemonTypeCrossRefEntity>)
+    suspend fun getPokeTypesByPokemon(id: Int): List<PokemonTypeCrossRefEntity>
 
     //attack
-    suspend fun saveAttacks(list: List<AttackEntity>) = attackDao.insert(list)
-    suspend fun getAttacksByPokemon(id: Int) = attackDao.getAttacksByPokemon(id)
+    suspend fun saveAttacks(list: List<AttackEntity>)
+    suspend fun getAttacksByPokemon(id: Int): List<AttackEntity>
 
     //skill
-    suspend fun saveSkills(list: List<SkillEntity>) = skillDao.insert(list)
-    suspend fun getSkillsByPokemon(id: Int) = skillDao.getSkillsByPokemon(id)
+    suspend fun saveSkills(list: List<SkillEntity>)
+    suspend fun getSkillsByPokemon(id: Int): List<SkillEntity>
 
     //locations
-    suspend fun saveLocations(list: List<LocationEntity>) = locationDao.insert(list)
-    suspend fun getLocationsByPokemon(id: Int) = locationDao.getLocationsByPokemon(id)
+    suspend fun saveLocations(list: List<LocationEntity>)
+    suspend fun getLocationsByPokemon(id: Int): List<LocationEntity>
 }

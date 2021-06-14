@@ -1,7 +1,6 @@
 package cl.littlephoenix.pokedex.data.api
 
 import cl.littlephoenix.pokedex.data.model.*
-import io.reactivex.rxjava3.core.Observable
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path

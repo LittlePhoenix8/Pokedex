@@ -6,8 +6,8 @@ import androidx.lifecycle.liveData
 import cl.littlephoenix.pokedex.data.model.toEntity
 import cl.littlephoenix.pokedex.data.model.toModel
 import cl.littlephoenix.pokedex.data.model.toPokeTypeEntity
-import cl.littlephoenix.pokedex.data.repository.PokedexLocalRepository
 import cl.littlephoenix.pokedex.data.repository.PokedexRepository
+import cl.littlephoenix.pokedex.data.repository.PokedexRoomRepository
 import cl.littlephoenix.pokedex.presentation.model.PokemonModel
 import cl.littlephoenix.pokedex.presentation.model.toEntity
 import cl.littlephoenix.pokedex.presentation.model.toEvolutionEntity
@@ -23,7 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class PokemonDetailsViewModel @Inject constructor(
     private val pokedexRepository: PokedexRepository,
-    private val localRepository: PokedexLocalRepository) : ViewModel() {
+    private val localRepository: PokedexRoomRepository) : ViewModel() {
         fun getPokemonDetails(pokemonId: Int) = liveData(Dispatchers.IO) {
             Log.d("Detail", "Pokemon $pokemonId")
             emit(Resource.loading(null))

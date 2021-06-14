@@ -1,7 +1,7 @@
 package cl.littlephoenix.pokedex.data.api
 
 import cl.littlephoenix.pokedex.data.model.PokemonResponse
-import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Flowable
 import retrofit2.http.GET
 
 interface PokedexApiServiceRx {
@@ -11,5 +11,5 @@ interface PokedexApiServiceRx {
     }
 
     @GET("pokemon?limit=100&offset= 151")
-    fun getSecondGenPokemon(): Observable<PokemonResponse>
+    fun getSecondGenPokemon(): Flowable<PokemonResponse>
 }

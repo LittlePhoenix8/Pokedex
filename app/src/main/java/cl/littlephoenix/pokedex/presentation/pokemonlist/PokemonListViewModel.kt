@@ -3,12 +3,11 @@ package cl.littlephoenix.pokedex.presentation.pokemonlist
 import android.util.Log
 import androidx.lifecycle.*
 import cl.littlephoenix.pokedex.data.entities.PokemonEntity
-import cl.littlephoenix.pokedex.data.model.PokemonResponse
 import cl.littlephoenix.pokedex.data.model.toEntity
 import cl.littlephoenix.pokedex.data.model.toModel
-import cl.littlephoenix.pokedex.data.repository.PokedexLocalRepository
 import cl.littlephoenix.pokedex.data.repository.PokedexRepository
 import cl.littlephoenix.pokedex.data.repository.PokedexRepositoryRx
+import cl.littlephoenix.pokedex.data.repository.PokedexRoomRepository
 import cl.littlephoenix.pokedex.presentation.model.PokemonModel
 import cl.littlephoenix.pokedex.presentation.model.toModel
 import cl.littlephoenix.pokedex.utils.Resource
@@ -19,16 +18,13 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
-import java.util.function.Consumer
-import java.util.function.Function
 import javax.inject.Inject
-
 
 @HiltViewModel
 class PokemonListViewModel @Inject constructor(
     private val pokedexRepository: PokedexRepository,
     private val pokedexRepositoryRx: PokedexRepositoryRx,
-    private val localRepository: PokedexLocalRepository) : ViewModel() {
+    private val localRepository: PokedexRoomRepository) : ViewModel() {
     fun getFirstGenPokemon() = liveData(Dispatchers.IO) {
         emit(Resource.loading(null))
         val local = localRepository.getAllPokemon()
