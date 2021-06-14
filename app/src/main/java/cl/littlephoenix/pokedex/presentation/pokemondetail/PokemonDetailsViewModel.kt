@@ -25,6 +25,7 @@ class PokemonDetailsViewModel @Inject constructor(
     private val pokedexRepository: PokedexRepository,
     private val localRepository: PokedexLocalRepository) : ViewModel() {
         fun getPokemonDetails(pokemonId: Int) = liveData(Dispatchers.IO) {
+            Log.d("Detail", "Pokemon $pokemonId")
             emit(Resource.loading(null))
             val local = localRepository.getPokemon(pokemonId)
             val attacks = localRepository.getAttacksByPokemon(pokemonId)
@@ -52,8 +53,8 @@ class PokemonDetailsViewModel @Inject constructor(
                 } else {
                     chainId = remoteSpecie.body()!!.evolution_chain.url.getIdFromUrl()
                     val evolutions = pokedexRepository.getPokemonEvolutions(chainId)
-                    Log.d("Evolutions", Gson().toJson(evolutions))
                     if (evolutions.isSuccessful && evolutions.body() != null) {
+                        Log.d("Evolutions", Gson().toJson(evolutions.body()))
                         if (evolutions.body()!!.chain.evolves_to.isNotEmpty()) {
                             evolutionList.add(evolutions.body()!!.chain.species.toModel(chainId))
                             for (poke in evolutions.body()!!.chain.evolves_to) {
@@ -103,24 +104,24 @@ class PokemonDetailsViewModel @Inject constructor(
         emit(Resource.loading(null))
         val local = localRepository.getLocationsByPokemon(pokemonId)
         Log.d("LocationLocal", Gson().toJson(local))
-        if (local != null) {
+        if (local.isNotEmpty()) {
             emit(Resource.success(local.map { it.location }))
         }
         try {
             val remote = pokedexRepository.getPokemonLocation(pokemonId)
             if (remote.isSuccessful) {
                 if (remote.body() != null) {
-                    Log.d("LocationRemote", Gson().toJson(remote))
+                    Log.d("LocationRemote", Gson().toJson(remote.body()))
                     val locations = remote.body()!!.map { it.location_area.name.getNameUppercase() }
                     val locationsEntity = remote.body()!!.map { it.location_area.toEntity(pokemonId) }
                     localRepository.saveLocations(locationsEntity)
                     emit(Resource.success(locations))
                 } else {
-                    Log.e("NetworkError", "network error")
+                    Log.e("NetworkError", "network error body null")
                     emit(Resource.error("Ups, there was an error, please try again", null))
                 }
             } else {
-                Log.e("NetworkError", "network error")
+                Log.e("NetworkError", "network error not successful")
                 emit(Resource.error("Ups, there was an error, please try again", null))
             }
         } catch (e: Exception) {

@@ -15,6 +15,7 @@ class PokemonListAdapter(
     private val pokemonList: ArrayList<PokemonModel>): RecyclerView.Adapter<ViewHolder>(), Filterable {
     var pokemonFilterList = ArrayList<PokemonModel>()
     var onItemClicked: ((PokemonModel) -> Unit)? = null
+    var onEndOfListReached: (() -> Unit)? = null
 
     init {
         pokemonFilterList = pokemonList
@@ -32,6 +33,9 @@ class PokemonListAdapter(
         holder.binding.ivPokemon.load(pokemon.urlPhoto)
         holder.binding.root.setOnClickListener {
             onItemClicked?.invoke(pokemon)
+        }
+        if (position == pokemonFilterList.size - 1) {
+            onEndOfListReached?.invoke()
         }
     }
 

@@ -56,6 +56,13 @@ class PokemonListFragment : Fragment() {
             findNavController()
                 .navigate(PokemonListFragmentDirections.goToPokemonDetails(pokemon = pokemon))
         }
+        adapter.onEndOfListReached = {
+            if (pokemonList.size == 151) {
+                Log.d("Pokemon", "end of first 151 pokemon")
+                showProgress()
+                viewModel.getSecondGenerationPokemon()
+            }
+        }
         viewModel.getTypes().observe(viewLifecycleOwner, {
             if (it.status == Resource.Status.SUCCESS) {
                 Log.d("PokeTypes", "Saved types on db")
@@ -77,6 +84,12 @@ class PokemonListFragment : Fragment() {
                     hideProgress()
                 }
             }
+        })
+        viewModel.getPokemonSecondGenerationList().observe(viewLifecycleOwner, {
+            Log.d("PokeList", Gson().toJson(it))
+            pokemonList.addAll(it)
+            (binding.rvPokemon.adapter as PokemonListAdapter).notifyDataSetChanged()
+            hideProgress()
         })
     }
 
