@@ -14,6 +14,9 @@ import cl.littlephoenix.pokedex.presentation.model.toModel
 import cl.littlephoenix.pokedex.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.CompletableObserver
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
 import java.util.function.Consumer
@@ -74,11 +77,12 @@ class PokemonListViewModel @Inject constructor(
     }
 
     private val pokemonSecondGenerationList = MutableLiveData<List<PokemonModel>>()
+    private val pokemonSecondGenerationError = MutableLiveData<String>()
 
     fun getPokemonSecondGenerationList(): MutableLiveData<List<PokemonModel>> = pokemonSecondGenerationList
+    fun getPokemonSecondGenerationError(): MutableLiveData<String> = pokemonSecondGenerationError
 
     fun getSecondGenerationPokemon() {
-        //TODO save pokemon rx
         pokedexRepositoryRx.getSecondGenPokemon()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -87,7 +91,25 @@ class PokemonListViewModel @Inject constructor(
             }
             .subscribe(
                 { pokemonEntityList -> pokemonSecondGenerationList.value = pokemonEntityList },
-                { error -> Log.e("SeconGenError", "error: ${error.message}")}
+                { error -> pokemonSecondGenerationError.value = error.message }
             )
+    }
+
+    fun saveSecondGeneration(pokemon: List<PokemonEntity>) {
+        localRepository.saveSecondGen(pokemon)
+            .subscribeOn(Schedulers.io())
+            .subscribe(object : CompletableObserver {
+                override fun onSubscribe(d: Disposable?) {
+                    Log.d("onSubscribe", "isDisposed ${d?.isDisposed}")
+                }
+                override fun onComplete() {
+                    Log.d("onComplete", "ok")
+                }
+                override fun onError(e: Throwable?) {
+                    Log.e("onError", "error ${e?.message}")
+                }
+            }).let {
+            CompositeDisposable().dispose()
+        }
     }
 }

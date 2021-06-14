@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import cl.littlephoenix.pokedex.databinding.PokemonListFragmentBinding
 import cl.littlephoenix.pokedex.presentation.model.PokemonModel
+import cl.littlephoenix.pokedex.presentation.model.toEntity
 import cl.littlephoenix.pokedex.utils.Resource
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
@@ -85,8 +86,13 @@ class PokemonListFragment : Fragment() {
                 }
             }
         })
+        viewModel.getPokemonSecondGenerationError().observe(viewLifecycleOwner, {
+            Log.e("SeconGenError", "error: $it")
+            hideProgress()
+        })
         viewModel.getPokemonSecondGenerationList().observe(viewLifecycleOwner, {
             Log.d("PokeList", Gson().toJson(it))
+            viewModel.saveSecondGeneration(it.map { poke -> poke.toEntity() })
             pokemonList.addAll(it)
             (binding.rvPokemon.adapter as PokemonListAdapter).notifyDataSetChanged()
             hideProgress()

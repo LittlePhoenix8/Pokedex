@@ -18,6 +18,8 @@ class PokedexLocalRepository @Inject constructor(
     suspend fun saveAllPokemon(pokemonList: List<PokemonEntity>) = pokemonDao.insert(pokemonList)
     suspend fun updateAllPokemon(pokemonList: List<PokemonEntity>) = pokemonDao.update(pokemonList)
 
+    fun saveSecondGen(pokemonList: List<PokemonEntity>) = pokemonDao.insertSecondGen(pokemonList)
+
     //pokemon evolutions
     suspend fun getPokemonEvolutions(id: Int) = pokemonEvolutionDao.getPokemonEvolutionsById(id)
     suspend fun savePokemonEvolutions(evolutions: List<PokemonEvolutionEntity>) = pokemonEvolutionDao.insertPokeEvols(evolutions)
